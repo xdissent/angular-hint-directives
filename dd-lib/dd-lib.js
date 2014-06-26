@@ -245,8 +245,8 @@ ddLib.getFailedAttributes = function(attributes, options) {
 ddLib.attributeExsistsInTypes = function(attribute, options) {
   var allTrue = false, wrongUse = '';
   options.directiveTypes.forEach(function(directiveType) {
-    isTag = attribute.charAt(0) == '*';
-    isCustomDir = directiveType == 'angular-custom-directives';
+    var isTag = attribute.charAt(0) == '*';
+    var isCustomDir = directiveType == 'angular-custom-directives';
     if(!isTag) {
       var directive = ddLib.directiveTypes[directiveType].directives[attribute];
       if(directive) {
@@ -281,8 +281,8 @@ ddLib.attributeExsistsInTypes = function(attribute, options) {
 ddLib.getSuggestions = function(attribute, options) {
   var min_levDist = Infinity, match = '', dirType = '';
   options.directiveTypes.forEach(function(directiveType) {
-    isTag = attribute.charAt(0) == '*';
-    isCustomDir = directiveType == 'angular-custom-directives';
+    var isTag = attribute.charAt(0) == '*';
+    var isCustomDir = directiveType == 'angular-custom-directives';
     if(!isTag || (isTag && isCustomDir)) {
       directiveTypeData = ddLib.directiveTypes[directiveType].directives
       var tempMatch = ddLib.findClosestMatchIn(directiveTypeData, attribute);

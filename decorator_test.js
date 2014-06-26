@@ -48,7 +48,10 @@ describe('ddLib and Angular Integration Test', function() {
       expect(console.log).toHaveBeenCalledWith(1);
     });
     it('should ignore comment nodes', function() {
-
+      var html = '<div id="topTest"><!-- This is a comment that shouldnt fail --></div>';
+      var element = angular.element(html);
+      $compile(element)($rootScope);
+      $rootScope.$apply();
     })
   });
   describe('angular.module Decorator', function() {
