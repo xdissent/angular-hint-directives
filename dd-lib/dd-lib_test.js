@@ -24,7 +24,7 @@ describe('dd-app', function() {
         {attributes: [{nodeName:'ng-clic'}], nodeName: 'DIV'}
       ]
       var corrections = ddLib.beginSearch(elementsToTest);
-      missingProperties = false;
+      var missingProperties = false;
       corrections.forEach(function(correction){
         if(!correction.data[0].error && !correction.data[0].match)
         {
