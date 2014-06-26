@@ -1,4 +1,4 @@
-Angular Hint Directives [![Build Status](https://travis-ci.org/caguillen214/directive-director.svg?branch=master)](https://travis-ci.org/caguillen214/directive-director)
+Angular Hint Directives [![Build Status](https://travis-ci.org/angular/angular-hint-directive.svg?branch=master)](https://travis-ci.org/caguillen214/angular/angular-hint-directive)
 ==================
 
 Project to identify and alert developer of possibly misspelled directives
