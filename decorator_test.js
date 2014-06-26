@@ -47,7 +47,9 @@ describe('ddLib and Angular Integration Test', function() {
       $rootScope.$apply();
       expect(console.log).toHaveBeenCalledWith(1);
     });
+    it('should ignore comment nodes', function() {
 
+    })
   });
   describe('angular.module Decorator', function() {
     var $rootScope, $compile;
