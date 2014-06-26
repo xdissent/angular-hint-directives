@@ -2,7 +2,7 @@
 
 describe('ddLib and Angular Integration Test', function() {
 
-  beforeEach(module('deedLib'));
+  beforeEach(module('ngHintDirectives'));
 
   describe('Decorator: $rootScope', function() {
     var $rootScope, $compile;

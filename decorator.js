@@ -5,7 +5,7 @@
 var customDirectives = [];
 
 
-angular.module('deedLib', [])
+angular.module('ngHintDirectives', [])
   .config(['$provide', function($provide) {
     $provide.decorator('$compile', ['$delegate', function($delegate) {
       return function(elem) {

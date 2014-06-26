@@ -1,5 +1,5 @@
 angular.module('demoApp',
-  ['deedLib','breadcrumbs','dataFetch', 'haAnimations', 'haPrFlags', 'haQuestions', 'ngAnimate',
+  ['ngHintDirectives','breadcrumbs','dataFetch', 'haAnimations', 'haPrFlags', 'haQuestions', 'ngAnimate',
   'haShareResources','haSupportComponents', 'haTriage', 'ngRoute', 'qaStore','ngLocale'])
   .config(['$routeProvider', function($routeProvider) {
      $routeProvider.when('/questions/help-support-components/:componentCat?/:subComponentCat?', {
