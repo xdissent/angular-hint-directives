@@ -15,23 +15,15 @@ describe('dd-app', function() {
         {attributes: [{nodeName:'ng-clic'}], nodeName: 'DIV'}
       ]
       var results = ddLib.beginSearch(elementsToTest);
-      expect(results.length).toBe(2);
+      expect(results.length).toBe(3);
     })
     it('should return an array of objects that have match and error properties', function(){
       var elementsToTest = [
-        {attributes: [{nodeName:'ng-ap'},{nodeName:'ng-hef'}], nodeName: 'DIV'},
-        {attributes: [{nodeName:'ng-src'}], nodeName: 'DIV'},
         {attributes: [{nodeName:'ng-clic'}], nodeName: 'DIV'}
       ]
-      var corrections = ddLib.beginSearch(elementsToTest);
-      var missingProperties = false;
-      corrections.forEach(function(correction){
-        if(!correction.data[0].error && !correction.data[0].match)
-        {
-          missingProperties = true;
-        }
-      });
-      expect(missingProperties).toBe(false);
+      var result = ddLib.beginSearch(elementsToTest);
+      expect(result[0].message).toBe('There was an AngularJS error in DIV element. Found '+
+        'incorrect attribute "ng-clic" try "ng-click".');
     });
   });
 
@@ -60,7 +52,7 @@ describe('dd-app', function() {
       var messages = ddLib.formatResults(failedElements);
       var display = 'There was an AngularJS error in HTML element. Found incorrect '+
         'attribute "ng-ap" try "ng-app".';
-      expect(messages[0]).toBe(display);
+      expect(messages[0].message).toBe(display);
     })
   });
 

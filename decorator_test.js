@@ -25,9 +25,10 @@ describe('ddLib and Angular Integration Test', function() {
     });
 
     it('should have no return no errors if there are none', function() {
-      spyOn(ddLib, 'displayResults').andCallFake(
+      spyOn(ddLib, 'formatResults').andCallFake(
         function(data) {
           console.log(data.length);
+          return [{messsage:'',domElement:''}];
         });
       var html = '<div id="topTest"><div ng-click="">Testing</div><p ng-src="">Testing</p></div>';
       var element = angular.element(html);
@@ -37,9 +38,10 @@ describe('ddLib and Angular Integration Test', function() {
     });
 
     it('should return the console.log the correct number of errors', function() {
-      spyOn(ddLib, 'displayResults').andCallFake(
+      spyOn(ddLib, 'formatResults').andCallFake(
         function(data) {
           console.log(data.length);
+          return [{messsage:'',domElement:''}];
         });
       var html = '<div id="topTest"><div ng-cick="">Testing</div><p ng-src="">Testing</p></div>';
       var element = angular.element(html);
