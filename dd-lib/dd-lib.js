@@ -161,7 +161,6 @@ var ddLib = {
  *    options.directiveTypes: [] of which type of directives/attributes to search through
  **/
 ddLib.beginSearch = function(scopeElements, customDirectives, options) {
-   console.log(scopeElements)
   if(!Array.isArray(scopeElements)) {
     throw new Error("Function beginSearch must be passed an array.");
   }

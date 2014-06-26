@@ -4,7 +4,7 @@ describe('ddLib and Angular Integration Test', function() {
 
   beforeEach(module('ngHintDirectives'));
 
-  describe('Decorator: $rootScope', function() {
+  ddescribe('Decorator: $rootScope', function() {
     var $rootScope, $compile;
 
     beforeEach(inject(function(_$rootScope_, _$compile_) {
@@ -48,10 +48,13 @@ describe('ddLib and Angular Integration Test', function() {
       expect(console.log).toHaveBeenCalledWith(1);
     });
     it('should ignore comment nodes', function() {
-      var html = '<div id="topTest"><!-- This is a comment that shouldnt fail --></div>';
+      var html = '<div id="topTest"><!-- ng-cick  this should not throw--></div>';
       var element = angular.element(html);
       $compile(element)($rootScope);
-      $rootScope.$apply();
+      expect(function() {
+        $rootScope.$apply();
+      }).not.toThrow();
+
     })
   });
   describe('angular.module Decorator', function() {

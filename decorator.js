@@ -10,7 +10,7 @@ angular.module('ngHintDirectives', [])
     $provide.decorator('$compile', ['$delegate', function($delegate) {
       return function(elem) {
         for(var i = 0; i < elem.length; i+=2){
-          if(true){//elem[i].getElementsByTagName){
+          if(elem[i].getElementsByTagName){
             var toSend = Array.prototype.slice.call(elem[i].getElementsByTagName('*'));
             var result = ddLib.beginSearch(toSend,customDirectives);
           }
