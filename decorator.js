@@ -7,13 +7,23 @@ var customDirectives = [];
 
 angular.module('ngHintDirectives', [])
   .config(['$provide', function($provide) {
-    $provide.decorator('$compile', ['$delegate', function($delegate) {
+    $provide.decorator('$compile', ['$delegate','$timeout', function($delegate, $timeout) {
       return function(elem) {
+        var messages=[];
         for(var i = 0; i < elem.length; i+=2){
           if(elem[i].getElementsByTagName){
             var toSend = Array.prototype.slice.call(elem[i].getElementsByTagName('*'));
             var result = ddLib.beginSearch(toSend,customDirectives);
+            messages = messages.concat(result);
           }
+        }
+        if(messages.length) {
+          console.groupCollapsed('Angular Hint: Directive');
+          messages.forEach(function(error) {
+            console.warn(error.message);
+            console.log(error.domElement);
+          })
+          console.groupEnd();
         }
         return $delegate.apply(this,arguments);
       };

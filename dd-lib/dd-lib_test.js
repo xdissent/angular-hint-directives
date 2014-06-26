@@ -47,7 +47,7 @@ describe('dd-app', function() {
     })
   });
 
-  describe('displayResults()', function() {
+  describe('formatResults()', function() {
     it('should display the correct message with respect to the correction found', function() {
       var failedElements = [{
         domElement:{id:'',nodeName:'HTML'},
@@ -57,7 +57,7 @@ describe('dd-app', function() {
           match: 'ng-app'
         }]
       }]
-      var messages = ddLib.displayResults(failedElements);
+      var messages = ddLib.formatResults(failedElements);
       var display = 'There was an AngularJS error in HTML element. Found incorrect '+
         'attribute "ng-ap" try "ng-app".';
       expect(messages[0]).toBe(display);

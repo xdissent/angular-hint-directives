@@ -173,8 +173,8 @@ ddLib.beginSearch = function(scopeElements, customDirectives, options) {
     ddLib.setCustomDirectives(customDirectives);
   }
   var failedElements = ddLib.findFailedElements(scopeElements, options);
-  var messages = ddLib.displayResults(failedElements);
-  return failedElements;
+  var messages = ddLib.formatResults(failedElements);
+  return messages;
 };
 
 ddLib.findFailedElements = function(scopeElements, options) {
@@ -337,7 +337,7 @@ ddLib.normalizeAttribute = function(attribute) {
  *
  *@return [] of failed messages.
  **/
-ddLib.displayResults = function(failedElements) {
+ddLib.formatResults = function(failedElements) {
   var messages = [];
   failedElements.forEach(function(obj) {
     obj.data.forEach(function(attr) {
@@ -352,9 +352,7 @@ ddLib.displayResults = function(failedElements) {
         var aecmType = (attr.wrongUse.indexOf('attribute') > -1)? 'Element' : 'Attribute';
         message += aecmType+' name "'+error+'" is reserved for '+attr.wrongUse+' names only.';
       }
-      console.warn(message);
-      console.log(obj.domElement)
-      messages.push(message)
+      messages.push({message:message, domElement: obj.domElement})
     })
   })
   return messages;
