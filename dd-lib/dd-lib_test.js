@@ -1,3 +1,4 @@
+'use strict';
 describe('dd-app', function() {
 
   describe('beginSearch()', function() {

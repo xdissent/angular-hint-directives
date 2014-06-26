@@ -1,3 +1,4 @@
+'use strict';
 var ddLib = {
   directiveTypes : {
     'html-directives': {
@@ -283,7 +284,7 @@ ddLib.getSuggestions = function(attribute, options) {
     var isTag = attribute.charAt(0) == '*';
     var isCustomDir = directiveType == 'angular-custom-directives';
     if(!isTag || (isTag && isCustomDir)) {
-      directiveTypeData = ddLib.directiveTypes[directiveType].directives
+      var directiveTypeData = ddLib.directiveTypes[directiveType].directives
       var tempMatch = ddLib.findClosestMatchIn(directiveTypeData, attribute);
       if(tempMatch.min_levDist < options.tolerance && tempMatch.min_levDist < min_levDist) {
         match = tempMatch.match;
@@ -340,9 +341,9 @@ ddLib.displayResults = function(failedElements) {
   var messages = [];
   failedElements.forEach(function(obj) {
     obj.data.forEach(function(attr) {
-      id = (obj.domElement.id) ? ' with id: #'+obj.domElement.id : '';
-      type = obj.domElement.nodeName;
-      message = ddLib.directiveTypes[attr.directiveType].message+type+' element'+id+'. ';
+      var id = (obj.domElement.id) ? ' with id: #'+obj.domElement.id : '';
+      var type = obj.domElement.nodeName;
+      var message = ddLib.directiveTypes[attr.directiveType].message+type+' element'+id+'. ';
       var error = (attr.error.charAt(0) == '*') ? attr.error.substring(1): attr.error;
       if(!attr.wrongUse) {
         message +='Found incorrect attribute "'+error+'" try "'+attr.match+'".';
