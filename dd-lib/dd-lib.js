@@ -410,3 +410,15 @@ ddLib.levenshteinDistance = function(s, t) {
     }
     return d[n][m];
 };
+
+/**
+ * @param str: string to convert formatting from camelCase to lowercase with dash after ng.
+ **/
+ddLib.camelToDashes = function(str) {
+ return str.toLowerCase().replace('ng','ng-');
+}
+
+
+
+
+

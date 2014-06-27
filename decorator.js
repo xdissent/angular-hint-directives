@@ -5,7 +5,7 @@
 var customDirectives = [];
 
 
-angular.module('ngHintDirectives', [])
+angular.module('ngHintDirectives', ['ngLocale'])
   .config(['$provide', function($provide) {
     $provide.decorator('$compile', ['$delegate','$timeout', function($delegate, $timeout) {
       return function(elem) {
@@ -29,7 +29,27 @@ angular.module('ngHintDirectives', [])
       };
     }]);
   }]);
-
+angular.module('ngLocale').config(function($provide) {
+  var originalProvider = $provide.provider;
+  $provide.provider = function(token, provider) {
+    var provider = originalProvider.apply($provide, arguments);
+    if (token === '$compile') {
+      provider.directive = function(dirsObj) {
+        for(var prop in dirsObj){
+          var propDashed = ddLib.camelToDashes(prop);
+          if(!ddLib.directiveTypes['angular-default-directives'].directives[propDashed] &&
+            !ddLib.directiveTypes['html-directives'].directives[propDashed]) {
+            var matchRestrict = dirsObj[prop].toString().match(/restrict:\s*'(.+?)'/) || 'ACME';
+            ddLib.directiveTypes['angular-default-directives']
+              .directives[propDashed] = matchRestrict[1];
+          }
+        };
+        return provider;
+      };
+    }
+    return provider;
+  }
+})
 var originalAngularModule = angular.module;
 angular.module = function() {
   var module = originalAngularModule.apply(this, arguments);

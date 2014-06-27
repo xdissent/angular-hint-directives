@@ -2,7 +2,7 @@
   "name": "angular-hint-directives",
   "version": "0.0.0",
   "description": "tool for identifing mistyped attributes and directives",
-  "main": "js/dd-lib.js",
+  "main": "decorator.js",
   "devDependencies": {
     "karma": "0.12.16",
     "karma-chrome-launcher": "^0.1.4",
@@ -15,12 +15,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/caguillen214/directive-director"
+    "url": "https://github.com/angular/angular-hint-directives"
   },
   "author": "caguillen214",
   "license": "apache 2",
   "bugs": {
-    "url": "https://github.com/caguillen214/directive-director/issues"
+    "url": "https://github.com/angular/angular-hint-directives/issues"
   },
-  "homepage": "https://github.com/caguillen214/directive-director"
+  "homepage": "https://github.com/angular/angular-hint-directives"
 }
