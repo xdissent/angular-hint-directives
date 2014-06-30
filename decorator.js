@@ -34,17 +34,18 @@ angular.module('ngLocale').config(function($provide) {
   $provide.provider = function(token, provider) {
     var provider = originalProvider.apply($provide, arguments);
     if (token === '$compile') {
+      var originalProviderDirective = provider.directive;
       provider.directive = function(dirsObj) {
         for(var prop in dirsObj){
           var propDashed = ddLib.camelToDashes(prop);
-          if(!ddLib.directiveTypes['angular-default-directives'].directives[propDashed] &&
+          if(isNaN(+propDashed) && !ddLib.directiveTypes['angular-default-directives'].directives[propDashed] &&
             !ddLib.directiveTypes['html-directives'].directives[propDashed]) {
             var matchRestrict = dirsObj[prop].toString().match(/restrict:\s*'(.+?)'/) || 'ACME';
             ddLib.directiveTypes['angular-default-directives']
               .directives[propDashed] = matchRestrict[1];
           }
         };
-        return provider;
+        return originalProviderDirective.apply(this, arguments);
       };
     }
     return provider;

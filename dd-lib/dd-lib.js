@@ -289,6 +289,7 @@ ddLib.getSuggestions = function(attribute, options) {
       if(tempMatch.min_levDist < options.tolerance && tempMatch.min_levDist < min_levDist) {
         match = tempMatch.match;
         dirType = directiveType;
+        min_levDist = tempMatch.min_levDist;
       }
     }
   });
