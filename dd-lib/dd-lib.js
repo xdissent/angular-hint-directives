@@ -131,7 +131,7 @@ var ddLib = {
         'ng-mouseup': 'A',
         'ng-nonbindable': 'A',
         'ng-open': 'A',
-        'ng-options': 'A'
+        'ng-options': 'A',
         'ng-paste': 'A',
         'ng-pattern': 'A',
         'ng-pluralize': 'A',
@@ -147,7 +147,7 @@ var ddLib = {
         'ng-switch': 'A',
         'ng-transclude': 'A',
         'ng-true-value': 'A',
-        'ng-trim': 'A'
+        'ng-trim': 'A',
         'ng-false-value': 'A',
         'ng-value': 'A',
         'ng-view': 'A',
