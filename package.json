@@ -2,7 +2,7 @@
   "name": "angular-hint-directives",
   "version": "0.0.0",
   "description": "tool for identifing mistyped attributes and directives",
-  "main": "decorator.js",
+  "main": "hint-directive.js",
   "devDependencies": {
     "karma": "0.12.16",
     "karma-chrome-launcher": "^0.1.4",
@@ -11,7 +11,8 @@
     "karma-jasmine": "^0.1.5"
   },
   "scripts": {
-    "test": "./node_modules/karma/bin/karma start --browsers Firefox --single-run"
+    "test": "./node_modules/karma/bin/karma start --browsers Firefox --single-run",
+    "build": "gulp"
   },
   "repository": {
     "type": "git",
@@ -22,5 +23,12 @@
   "bugs": {
     "url": "https://github.com/angular/angular-hint-directives/issues"
   },
-  "homepage": "https://github.com/angular/angular-hint-directives"
+  "homepage": "https://github.com/angular/angular-hint-directives",
+  "dependencies": {
+    "browserify": "^4.2.0",
+    "gulp": "^3.8.5",
+    "karma-bro": "^0.6.0",
+    "karma-coverage": "^0.2.4",
+    "watchify": "^0.10.2"
+  }
 }
