@@ -88,6 +88,8 @@ var ddLib = {
       message: 'There was an AngularJS error in ',
       directives: {
         'count': 'A',
+        'min': 'A',
+        'max': 'A',
         'ng-app': 'A',
         'ng-bind': 'A',
         'ng-bindhtml': 'A',
@@ -117,6 +119,8 @@ var ddLib = {
         'ng-keypress': 'A',
         'ng-keyup': 'A',
         'ng-list': 'A',
+        'ng-maxlength': 'A',
+        'ng-minlength': 'A',
         'ng-model': 'A',
         'ng-modeloptions': 'A',
         'ng-mousedown': 'A',
@@ -127,10 +131,13 @@ var ddLib = {
         'ng-mouseup': 'A',
         'ng-nonbindable': 'A',
         'ng-open': 'A',
+        'ng-options': 'A'
         'ng-paste': 'A',
+        'ng-pattern': 'A',
         'ng-pluralize': 'A',
         'ng-readonly': 'A',
         'ng-repeat': 'A',
+        'ng-required': 'A',
         'ng-selected': 'A',
         'ng-show': 'A',
         'ng-src': 'A',
@@ -139,8 +146,12 @@ var ddLib = {
         'ng-submit': 'A',
         'ng-switch': 'A',
         'ng-transclude': 'A',
+        'ng-true-value': 'A',
+        'ng-trim': 'A'
+        'ng-false-value': 'A',
         'ng-value': 'A',
         'ng-view': 'A',
+        'required': 'A',
         'when': 'A'
       }
       },
