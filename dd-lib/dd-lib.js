@@ -324,7 +324,7 @@ ddLib.findClosestMatchIn = function(directiveTypeData, attribute) {
   }
   var min_levDist = Infinity, closestMatch = '';
   for(var directive in directiveTypeData){
-    if(Math.abs(attribute.length-directive.length) < 3) {
+    if(ddLib.areSimilarEnough(attribute,directive)) {
       var currentlevDist = ddLib.levenshteinDistance(attribute, directive);
       var closestMatch = (currentlevDist < min_levDist)? directive : closestMatch;
       var min_levDist = (currentlevDist < min_levDist)? currentlevDist : min_levDist;
@@ -379,6 +379,25 @@ ddLib.setCustomDirectives = function(customDirectives) {
     ddLib.directiveTypes['angular-custom-directives']
       .directives[directiveName] = directive.restrict;
   })
+}
+
+/**
+ *@param s: first string to compare
+ *@param t: second string to compare
+ *
+ *@description:
+ *Checks to see if two strings are similiar enough to even bother checking the Levenshtein Distance.
+ */
+ddLib.areSimilarEnough = function(s,t) {
+  var strMap = {}, similarities = 0, STRICTNESS = .66;
+  if(Math.abs(s.length-t.length) > 3) {
+    return false;
+  }
+  s.split('').forEach(function(x){strMap[x] = x});
+  for (var i = t.length - 1; i >= 0; i--) {
+    similarities = strMap[t.charAt(i)] ? similarities + 1 : similarities;
+  };
+  return similarities >= t.length * STRICTNESS;
 }
 
 /**
