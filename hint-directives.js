@@ -17,7 +17,7 @@ angular.module('ngHintDirectives', ['ngLocale'])
           }
         }
         if(messages.length) {
-          console.groupCollapsed('Angular Hint: Directive');
+          console.groupCollapsed('Angular Hint: Directives');
           messages.forEach(function(error) {
             console.warn(error.message);
             console.log(error.domElement);
