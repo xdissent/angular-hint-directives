@@ -3,6 +3,9 @@ directive('haBreadcrumbs', function() {
   return {
     restrict: 'E',
     templateUrl: 'components/breadcrumbs/breadcrumbs.html',
-    scope: {breadcrumbs: '='}
+    scope: {
+      breadcrumbs: '=',
+      bar: '@tree'
+    }
   };
 });

@@ -1,6 +1,6 @@
 'use strict';
 
-var ddLib = require('./dd-lib/dd-lib');
+//var ddLib = require('./dd-lib/dd-lib');
 var customDirectives = [];
 
 
@@ -16,14 +16,7 @@ angular.module('ngHintDirectives', ['ngLocale'])
             messages = messages.concat(result);
           }
         }
-        if(messages.length) {
-          console.groupCollapsed('Angular Hint: Directives');
-          messages.forEach(function(error) {
-            console.warn(error.message);
-            console.log(error.domElement);
-          })
-          console.groupEnd();
-        }
+        ddLib.displayResults(messages);
         return $delegate.apply(this,arguments);
       };
     }]);
@@ -58,22 +51,15 @@ angular.module = function() {
   module.directive = function(directiveName, directiveFactory) {
     var originalDirectiveFactory = typeof directiveFactory === 'function' ? directiveFactory :
         directiveFactory[directiveFactory.length - 1];
-    var directive = {directiveName: directiveName, restrict: 'AE'}
-    customDirectives.push(directive);
+
+    var pairs = ddLib.getKeysAndValues(originalDirectiveFactory.toString());
+    pairs.map(function(pair){customDirectives.push(pair)});
+
     var matchRestrict = originalDirectiveFactory.toString().match(/restrict:\s*'(.+?)'/);
-    var matchScope = originalDirectiveFactory.toString().match(/scope:\s*?{\s*?(\w+):\s*?'(.+?)'/);
-    if(matchScope) {
-      var name = (matchScope[2]=='=')? matchScope[1] : matchScope[2].substring(1);
-      customDirectives.push({directiveName: name , restrict:'A'})
-    }
-    if (matchRestrict) {
-      directive.restrict = matchRestrict[1];
-    }
-    arguments[1][0] = function () {
-      var ddo = originalDirectiveFactory.apply(this, arguments);
-      directive.restrict = ddo.restrict || 'A';
-      return ddo;
-    };
+    var restrict = matchRestrict[1] || 'ACME';
+    var directive = {directiveName: directiveName, restrict: restrict, require:pairs};
+    customDirectives.push(directive);
+
     return originalDirective.apply(this, arguments);
   };
   return module;

@@ -376,6 +376,31 @@ ddLib.formatResults = function(failedElements) {
   return messages;
 };
 
+ddLib.getKeysAndValues = function(str) {
+  var customDirectives = [], pairs = [];
+  var matchScope = str.replace(/\n/g,'').match(/scope:\s*?{\s*.*['"]\s*}/);
+  matchScope[0].match(/\w+: ?'[a-zA-Z=@]+'/g).map(function(str){
+    var temp = str.match(/(\w+): ?['"](.+)['"]/);
+    pairs.push({key:temp[1],value:temp[2]});
+  })
+  pairs.forEach(function(pair){
+    var name = (pair.value=='=')||(pair.value=='@')? pair.key : pair.value.substring(1);
+    customDirectives.push({directiveName: name , restrict:'A'});
+  });
+  return customDirectives;
+}
+
+ddLib.displayResults = function(messages) {
+  if(messages.length) {
+    console.groupCollapsed('Angular Hint: Directives');
+    messages.forEach(function(error) {
+      console.warn(error.message);
+      console.log(error.domElement);
+    })
+    console.groupEnd();
+  }
+};
+
 /**
  *@param customDirectives: [] of custom directive objects from $compile decorator
  **/
