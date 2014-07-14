@@ -1,4 +1,4 @@
-Angular Hint Directives [![Build Status](https://travis-ci.org/angular/angular-hint-directives.svg?branch=master)](https://travis-ci.org/angular/angular-hint-directives)
+Angular Hint Directives [![Build Status](https://travis-ci.org/angular/angular-hint-directives.svg?branch=master)](https://travis-ci.org/angular/angular-hint-directives) [![Code Climate](https://codeclimate.com/github/angular/angular-hint-directives.png)](https://codeclimate.com/github/angular/angular-hint-directives)
 ==================
 
 Angular Hint Directives lets you spend less time finding silent errors in your code and more time on actually programming. This tool is a subset of many under the [Angular Hint](https://github.com/angular/angular-hint) repository that specializes in identifying errors relating to directives. For instructions on how to incorporate the whole Angular Hint repository into your project, please refer to the link above.
