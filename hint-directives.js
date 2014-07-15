@@ -37,13 +37,13 @@ angular.module('ngLocale').config(function($provide) {
             ddLib.directiveDetails.directiveTypes['angular-default-directives']
               .directives[propDashed] = matchRestrict[1];
           }
-        };
+        }
         return originalProviderDirective.apply(this, arguments);
       };
     }
     return provider;
-  }
-})
+  };
+});
 var originalAngularModule = angular.module;
 angular.module = function() {
   var module = originalAngularModule.apply(this, arguments);
@@ -54,12 +54,12 @@ angular.module = function() {
 
 
     var pairs = ddLib.getKeysAndValues(originalDirectiveFactory.toString());
-    pairs.map(function(pair){customDirectives.push(pair)});
+    pairs.map(function(pair){customDirectives.push(pair);});
 
 
     var matchRestrict = originalDirectiveFactory.toString().match(/restrict:\s*'(.+?)'/);
     var restrict = matchRestrict[1] || 'ACME';
-    var directive = {directiveName: directiveName, restrict: 'AE',  require:pairs}
+    var directive = {directiveName: directiveName, restrict: 'AE',  require:pairs};
     customDirectives.push(directive);
 
     arguments[1][0] = function () {
@@ -70,4 +70,4 @@ angular.module = function() {
     return originalDirective.apply(this, arguments);
   };
   return module;
-}
+};
