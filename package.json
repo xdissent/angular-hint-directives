@@ -31,4 +31,7 @@
     "karma-coverage": "^0.2.4",
     "watchify": "^0.10.2"
   }
+  "jshintConfig": {
+    "predef": ["angular","console","ddlib"]
+  }
 }
