@@ -168,7 +168,7 @@ ddLib.directiveDetails = {
       }
     }
   }
-}
+};
 
 /**
  *
@@ -184,7 +184,7 @@ ddLib.beginSearch = function(scopeElements, customDirectives, options) {
   }
   options = options || {};
   options.directiveTypes = options.directiveTypes ||
-    ['html-directives','angular-default-directives','angular-custom-directives'];;
+    ['html-directives','angular-default-directives','angular-custom-directives'];
   options.tolerance = options.tolerance || 4;
   if(customDirectives) {
     ddLib.setCustomDirectives(customDirectives);
@@ -197,7 +197,7 @@ ddLib.beginSearch = function(scopeElements, customDirectives, options) {
 ddLib.findFailedElements = function(scopeElements, options) {
   return scopeElements.map(ddLib.getFailedAttributesOfElement.bind(null,options))
     .filter(function(x) {return x;});
-}
+};
 
 /**
  *@description
@@ -265,9 +265,6 @@ ddLib.getFailedAttributes = function(attributes, options) {
  **/
 ddLib.attributeExsistsInTypes = function(attribute, options) {
   var allTrue = false, wrongUse = '';
-    if(attribute == 'scrs'){
-    console.log('hi')
-  }
   options.directiveTypes.forEach(function(directiveType) {
     var isTag = attribute.charAt(0) == '*';
     var isCustomDir = directiveType == 'angular-custom-directives';
@@ -286,7 +283,6 @@ ddLib.attributeExsistsInTypes = function(attribute, options) {
       }
     }
     else if(isTag && isCustomDir){
-      // var directive = ddLib.directiveDetails.directiveTypes[directiveType].directives[attribute.substring(1)];
       var directive = ddLib.directiveDetails.directiveTypes[directiveType].directives[attribute.substring(1)] || '';
       var restrict = directive.restrict || directive;
       if(restrict){
@@ -313,7 +309,7 @@ ddLib.getSuggestions = function(attribute, options) {
     var isTag = attribute.charAt(0) == '*';
     var isCustomDir = directiveType == 'angular-custom-directives';
     if(!isTag || (isTag && isCustomDir)) {
-      var directiveTypeData = ddLib.directiveDetails.directiveTypes[directiveType].directives
+      var directiveTypeData = ddLib.directiveDetails.directiveTypes[directiveType].directives;
       var tempMatch = ddLib.findClosestMatchIn(directiveTypeData, attribute);
       if(tempMatch.min_levDist < options.tolerance && tempMatch.min_levDist < min_levDist) {
         match = tempMatch.match;
@@ -362,8 +358,9 @@ ddLib.normalizeAttribute = function(attribute) {
 };
 
 ddLib.missingRequiredAttrs = function(dirName, attributes) {
+  attributes = attributes.map(function(x){return x.nodeName;});
   var directive = ddLib.directiveDetails.directiveTypes['angular-custom-directives'].directives[dirName];
-  var missing = [], attributes = attributes.map(function(x){return x.nodeName});
+  var missing = [];
   if(dirName.toLowerCase() == 'ha-breadcrumbs') {
     console.log('');
   }
@@ -383,13 +380,13 @@ ddLib.getKeysAndValues = function(str) {
   matchScope[0].match(/\w+: ?'[a-zA-Z=@]+'/g).map(function(str){
     var temp = str.match(/(\w+): ?['"](.+)['"]/);
     pairs.push({key:temp[1],value:temp[2]});
-  })
+  });
   pairs.forEach(function(pair){
     var name = (pair.value=='=')||(pair.value=='@')? pair.key : pair.value.substring(1);
     customDirectives.push({directiveName: name , restrict:'A'});
   });
   return customDirectives;
-}
+};
 
 /**
  *@param failedElements: [] of {}s of all failed elements with their failed attributes and closest
@@ -420,13 +417,13 @@ ddLib.formatResults = function(failedElements) {
         var missing = '';
         attr.missing.forEach(function(str){
           missing += '"'+str+'",';
-        })
+        });
         missing = '['+missing.substring(0,missing.length-1)+'] ';
         message = 'Attribute'+s+missing+waswere+'found to be missing in '+type+ ' element'+id+'.';
       }
-      messages.push({message:message, domElement: obj.domElement})
-    })
-  })
+      messages.push({message:message, domElement: obj.domElement});
+    });
+  });
   return messages;
 };
 
@@ -436,7 +433,7 @@ ddLib.displayResults = function(messages) {
     messages.forEach(function(error) {
       console.warn(error.message);
       console.log(error.domElement);
-    })
+    });
     console.groupEnd();
   }
 };
@@ -449,8 +446,8 @@ ddLib.setCustomDirectives = function(customDirectives) {
     var directiveName = directive.directiveName.replace(/([A-Z])/g, '-$1').toLowerCase();
     ddLib.directiveDetails.directiveTypes['angular-custom-directives']
       .directives[directiveName] = directive;
-  })
-}
+  });
+};
 
 /**
  *@param s: first string to compare
@@ -460,16 +457,16 @@ ddLib.setCustomDirectives = function(customDirectives) {
  *Checks to see if two strings are similiar enough to even bother checking the Levenshtein Distance.
  */
 ddLib.areSimilarEnough = function(s,t) {
-  var strMap = {}, similarities = 0, STRICTNESS = .66;
+  var strMap = {}, similarities = 0, STRICTNESS = 0.66;
   if(Math.abs(s.length-t.length) > 3) {
     return false;
   }
-  s.split('').forEach(function(x){strMap[x] = x});
+  s.split('').forEach(function(x){strMap[x] = x;});
   for (var i = t.length - 1; i >= 0; i--) {
     similarities = strMap[t.charAt(i)] ? similarities + 1 : similarities;
-  };
+  }
   return similarities >= t.length * STRICTNESS;
-}
+};
 
 /**
  *@param s: first string to compare for Levenshtein Distance.
@@ -486,8 +483,8 @@ ddLib.levenshteinDistance = function(s, t) {
     var n = s.length;
     var m = t.length;
 
-    if (n == 0) return m;
-    if (m == 0) return n;
+    if (n === 0) return m;
+    if (m === 0) return n;
 
     for (var i = n; i >= 0; i--) d[i] = [];
     for (var i = n; i >= 0; i--) d[i][0] = i;
@@ -518,7 +515,7 @@ ddLib.levenshteinDistance = function(s, t) {
  **/
 ddLib.camelToDashes = function(str) {
  return str.replace(/([A-Z])/g, function($1){return "-"+$1.toLowerCase();});
-}
+};
 
 }((typeof module !== 'undefined' && module && module.exports) ?
       (module.exports = window.ddLib = {}) : (window.ddLib = {}) ));
