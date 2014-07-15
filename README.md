@@ -32,6 +32,9 @@ So if in your code you tried to use:
 ```
 You would promtly be notified that you have used 'ha-breadcrumbs' as an attribute when its reserved for elements only and vice verse for 'breadcrumbs'. If you were to fix that error by switching 'ha-breadcrumbs' and 'breadcrumbs', you would then be warned that you are missing the attribute 'id' in your directive since it was declared when the directive was created.
 
+Sample of console after warnings:
+![alt tag](https://raw.githubusercontent.com/angular/angular-hint-directives/master/demoApp/assets/img/Hint%20Directives%20Console.png)
+
 ## [License](LICENSE)
 
 Copyright 2014 Google, Inc. http://angularjs.org
