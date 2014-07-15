@@ -19,7 +19,10 @@ directive('haBreadcrumbs', function() {
   return {
     restrict: 'E',
     templateUrl: 'components/breadcrumbs/breadcrumbs.html',
-    scope: {breadcrumbs: '='}
+    scope: {
+      breadcrumbs: '=',
+      id = '@'
+    }
   };
 });
 ```
@@ -27,7 +30,7 @@ So if in your code you tried to use:
 ```html
 <breadcrumbs ha-breadcrumbs="['home','profile','about']"> </breadcrumbs>
 ```
-You would promtly be notified that you have used 'ha-breadcrumbs' as an attribute when its reserved for elements only and vice verse for 'breadcrumbs'.
+You would promtly be notified that you have used 'ha-breadcrumbs' as an attribute when its reserved for elements only and vice verse for 'breadcrumbs'. If you were to fix that error by switching 'ha-breadcrumbs' and 'breadcrumbs', you would then be warned that you are missing the attribute 'id' in your directive since it was declared when the directive was created.
 
 ## [License](LICENSE)
 
