@@ -52,16 +52,22 @@ angular.module = function() {
     var originalDirectiveFactory = typeof directiveFactory === 'function' ? directiveFactory :
         directiveFactory[directiveFactory.length - 1];
 
+
     var pairs = ddLib.getKeysAndValues(originalDirectiveFactory.toString());
     pairs.map(function(pair){customDirectives.push(pair)});
 
+
     var matchRestrict = originalDirectiveFactory.toString().match(/restrict:\s*'(.+?)'/);
     var restrict = matchRestrict[1] || 'ACME';
-    var directive = {directiveName: directiveName, restrict: restrict, require:pairs};
+    var directive = {directiveName: directiveName, restrict: 'AE',  require:pairs}
     customDirectives.push(directive);
 
+    arguments[1][0] = function () {
+      var ddo = originalDirectiveFactory.apply(this, arguments);
+      directive.restrict = ddo.restrict || 'A';
+      return ddo;
+    };
     return originalDirective.apply(this, arguments);
   };
   return module;
 }
-

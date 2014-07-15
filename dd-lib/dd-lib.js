@@ -214,7 +214,11 @@ ddLib.getFailedAttributesOfElement = function(options, element) {
     var elementAttributes = Array.prototype.slice.call(element.attributes);
     elementAttributes.push({nodeName: "*"+element.nodeName.toLowerCase()});
     var failedAttributes = ddLib.getFailedAttributes(elementAttributes, options);
-    if(failedAttributes.length) {
+    var missingRequired = ddLib.missingRequiredAttrs(element.nodeName.toLowerCase(),elementAttributes);
+    if(failedAttributes.length || missingRequired.length) {
+      if(missingRequired.length) {
+        failedAttributes.push({directiveType: 'angular-custom-directive', missing:missingRequired});
+      }
       return {
         domElement: element,
         data: failedAttributes
@@ -261,31 +265,39 @@ ddLib.getFailedAttributes = function(attributes, options) {
  **/
 ddLib.attributeExsistsInTypes = function(attribute, options) {
   var allTrue = false, wrongUse = '';
+    if(attribute == 'scrs'){
+    console.log('hi')
+  }
   options.directiveTypes.forEach(function(directiveType) {
     var isTag = attribute.charAt(0) == '*';
     var isCustomDir = directiveType == 'angular-custom-directives';
     if(!isTag) {
-      var directive = ddLib.directiveDetails.directiveTypes[directiveType].directives[attribute];
-      if(directive) {
-        if(directive.indexOf('E') > -1 && directive.indexOf('A') < 0) {
+      // var directive = ddLib.directiveDetails.directiveTypes[directiveType].directives[attribute];
+      var directive = ddLib.directiveDetails.directiveTypes[directiveType].directives[attribute] || '';
+      var restrict = directive.restrict || directive;
+      if(restrict) {
+        if(restrict.indexOf('E') > -1 && restrict.indexOf('A') < 0) {
           wrongUse = 'element';
         }
-        if(directive.indexOf('C') > -1 && directive.indexOf('A') < 0) {
+        if(restrict.indexOf('C') > -1 && restrict.indexOf('A') < 0) {
           wrongUse = (wrongUse) ? 'element and class' : 'class';
         }
         allTrue = allTrue || true;
       }
     }
     else if(isTag && isCustomDir){
-      var directive = ddLib.directiveDetails.directiveTypes[directiveType].directives[attribute.substring(1)];
-      if(directive){
+      // var directive = ddLib.directiveDetails.directiveTypes[directiveType].directives[attribute.substring(1)];
+      var directive = ddLib.directiveDetails.directiveTypes[directiveType].directives[attribute.substring(1)] || '';
+      var restrict = directive.restrict || directive;
+      if(restrict){
         allTrue = allTrue || true;
-        if(directive && directive.indexOf('A') > -1 && directive.indexOf('E') < 0) {
+        if(restrict && restrict.indexOf('A') > -1 && restrict.indexOf('E') < 0) {
           wrongUse = 'attribute';
         }
       }
     }
   });
+
   return {exsists: allTrue, wrongUse: wrongUse};
 };
 
@@ -349,31 +361,20 @@ ddLib.normalizeAttribute = function(attribute) {
   return attribute.replace(/^(?:data|x)[-_:]/,"").replace(/[:_]/g,'-');
 };
 
-/**
- *@param failedElements: [] of {}s of all failed elements with their failed attributes and closest
- *matches or restrict properties
- *
- *@return [] of failed messages.
- **/
-ddLib.formatResults = function(failedElements) {
-  var messages = [];
-  failedElements.forEach(function(obj) {
-    obj.data.forEach(function(attr) {
-      var id = (obj.domElement.id) ? ' with id: #'+obj.domElement.id : '';
-      var type = obj.domElement.nodeName;
-      var message = ddLib.directiveDetails.directiveTypes[attr.directiveType].message+type+' element'+id+'. ';
-      var error = (attr.error.charAt(0) == '*') ? attr.error.substring(1): attr.error;
-      if(!attr.wrongUse) {
-        message +='Found incorrect attribute "'+error+'" try "'+attr.match+'".';
+ddLib.missingRequiredAttrs = function(dirName, attributes) {
+  var directive = ddLib.directiveDetails.directiveTypes['angular-custom-directives'].directives[dirName];
+  var missing = [], attributes = attributes.map(function(x){return x.nodeName});
+  if(dirName.toLowerCase() == 'ha-breadcrumbs') {
+    console.log('');
+  }
+  if(directive && directive.require) {
+    for(var i = 0; i < directive.require.length; i++) {
+      if(attributes.indexOf(directive.require[i].directiveName) < 0) {
+        missing.push(directive.require[i].directiveName);
       }
-      else {
-        var aecmType = (attr.wrongUse.indexOf('attribute') > -1)? 'Element' : 'Attribute';
-        message += aecmType+' name "'+error+'" is reserved for '+attr.wrongUse+' names only.';
-      }
-      messages.push({message:message, domElement: obj.domElement})
-    })
-  })
-  return messages;
+    }
+  }
+  return missing;
 };
 
 ddLib.getKeysAndValues = function(str) {
@@ -389,6 +390,45 @@ ddLib.getKeysAndValues = function(str) {
   });
   return customDirectives;
 }
+
+/**
+ *@param failedElements: [] of {}s of all failed elements with their failed attributes and closest
+ *matches or restrict properties
+ *
+ *@return [] of failed messages.
+ **/
+ddLib.formatResults = function(failedElements) {
+  var messages = [];
+  failedElements.forEach(function(obj) {
+    obj.data.forEach(function(attr) {
+      var id = (obj.domElement.id) ? ' with id: #'+obj.domElement.id : '';
+      var type = obj.domElement.nodeName, message;
+      if(attr.error) {
+        message = ddLib.directiveDetails.directiveTypes[attr.directiveType].message+type+' element'+id+'. ';
+        var error = (attr.error.charAt(0) == '*') ? attr.error.substring(1): attr.error;
+        if(!attr.wrongUse) {
+          message +='Found incorrect attribute "'+error+'" try "'+attr.match+'".';
+        }
+        else {
+          var aecmType = (attr.wrongUse.indexOf('attribute') > -1)? 'Element' : 'Attribute';
+          message += aecmType+' name "'+error+'" is reserved for '+attr.wrongUse+' names only.';
+        }
+      }
+      else if(attr.missing){
+        var s = attr.missing.length == 1 ? ' ' : 's ';
+        var waswere = attr.missing.length == 1 ? 'was ' : 'were ';
+        var missing = '';
+        attr.missing.forEach(function(str){
+          missing += '"'+str+'",';
+        })
+        missing = '['+missing.substring(0,missing.length-1)+'] ';
+        message = 'Attribute'+s+missing+waswere+'found to be missing in '+type+ ' element'+id+'.';
+      }
+      messages.push({message:message, domElement: obj.domElement})
+    })
+  })
+  return messages;
+};
 
 ddLib.displayResults = function(messages) {
   if(messages.length) {
@@ -408,7 +448,7 @@ ddLib.setCustomDirectives = function(customDirectives) {
   customDirectives.forEach(function(directive) {
     var directiveName = directive.directiveName.replace(/([A-Z])/g, '-$1').toLowerCase();
     ddLib.directiveDetails.directiveTypes['angular-custom-directives']
-      .directives[directiveName] = directive.restrict;
+      .directives[directiveName] = directive;
   })
 }
 
@@ -482,6 +522,3 @@ ddLib.camelToDashes = function(str) {
 
 }((typeof module !== 'undefined' && module && module.exports) ?
       (module.exports = window.ddLib = {}) : (window.ddLib = {}) ));
-
-
-
