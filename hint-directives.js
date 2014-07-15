@@ -16,7 +16,6 @@ angular.module('ngHintDirectives', ['ngLocale'])
             messages = messages.concat(result);
           }
         }
-        ddLib.displayResults(messages);
         return $delegate.apply(this,arguments);
       };
     }]);

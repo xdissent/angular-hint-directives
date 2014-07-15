@@ -2,6 +2,11 @@
 
 'use strict';
 
+var hintLog = require('angular-hint-log');
+hintLog.moduleName = 'Directives';
+hintLog.moduleDescription = '';
+ddLib.errorNumber = 0;
+
 ddLib.directiveDetails = {
   directiveTypes : {
     'html-directives': {
@@ -391,7 +396,6 @@ ddLib.getKeysAndValues = function(str) {
  *@return [] of failed messages.
  **/
 ddLib.formatResults = function(failedElements) {
-  var messages = [];
   failedElements.forEach(function(obj) {
     obj.data.forEach(function(attr) {
       var id = (obj.domElement.id) ? ' with id: #'+obj.domElement.id : '';
@@ -417,22 +421,11 @@ ddLib.formatResults = function(failedElements) {
         missing = '['+missing.substring(0,missing.length-1)+'] ';
         message = 'Attribute'+s+missing+waswere+'found to be missing in '+type+ ' element'+id+'.';
       }
-      messages.push({message:message, domElement: obj.domElement});
+      hintLog.createErrorMessage(message, ddLib.errorNumber = ++ddLib.errorNumber, obj.domElement);
     });
   });
-  return messages;
 };
 
-ddLib.displayResults = function(messages) {
-  if(messages.length) {
-    console.groupCollapsed('Angular Hint: Directives');
-    messages.forEach(function(error) {
-      console.warn(error.message);
-      console.log(error.domElement);
-    });
-    console.groupEnd();
-  }
-};
 
 /**
  *@param customDirectives: [] of custom directive objects from $compile decorator
