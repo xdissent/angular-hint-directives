@@ -361,9 +361,6 @@ ddLib.missingRequiredAttrs = function(dirName, attributes) {
   attributes = attributes.map(function(x){return x.nodeName;});
   var directive = ddLib.directiveDetails.directiveTypes['angular-custom-directives'].directives[dirName];
   var missing = [];
-  if(dirName.toLowerCase() == 'ha-breadcrumbs') {
-    console.log('');
-  }
   if(directive && directive.require) {
     for(var i = 0; i < directive.require.length; i++) {
       if(attributes.indexOf(directive.require[i].directiveName) < 0) {

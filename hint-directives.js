@@ -51,13 +51,13 @@ angular.module = function() {
   module.directive = function(directiveName, directiveFactory) {
     var originalDirectiveFactory = typeof directiveFactory === 'function' ? directiveFactory :
         directiveFactory[directiveFactory.length - 1];
+    var factoryStr = originalDirectiveFactory.toString();
 
-
-    var pairs = ddLib.getKeysAndValues(originalDirectiveFactory.toString());
+    var pairs = ddLib.getKeysAndValues(factoryStr);
     pairs.map(function(pair){customDirectives.push(pair);});
 
 
-    var matchRestrict = originalDirectiveFactory.toString().match(/restrict:\s*'(.+?)'/);
+    var matchRestrict = factoryStr.match(/restrict:\s*'(.+?)'/);
     var restrict = matchRestrict[1] || 'ACME';
     var directive = {directiveName: directiveName, restrict: 'AE',  require:pairs};
     customDirectives.push(directive);
