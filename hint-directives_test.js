@@ -96,7 +96,7 @@ describe('ddLib and Angular Integration Test', function() {
       $compile(element)($rootScope);
       $rootScope.$apply();
       var customDirectives =
-        ddLib.directiveDetails.directiveTypes['angular-custom-directives'].directives;
+        ddLib.data.directiveTypes['angular-custom-directives'].directives;
       expect(customDirectives['test-directive']).toBeTruthy();
     });
     it('should log error if custom directive is misspelled', function() {

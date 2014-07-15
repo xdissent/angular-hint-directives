@@ -7,7 +7,7 @@ hintLog.moduleName = 'Directives';
 hintLog.moduleDescription = '';
 ddLib.errorNumber = 0;
 
-ddLib.directiveDetails = {
+ddLib.data = {
   directiveTypes : {
     'html-directives': {
       message: 'There was an HTML error in ',
@@ -57,23 +57,23 @@ ddLib.directiveDetails = {
       'media': 'A',
       'multiple': 'A',
       'name': 'A',
-      'object': 'A',
-      'onblur': 'A',
-      'onchange': 'A',
-      'onclick': 'A',
-      'onfocus': 'A',
-      'onkeydown': 'A',
-      'onkeypress': 'A',
-      'onkeyup': 'A',
-      'onload': 'A',
-      'onmousedown': 'A',
-      'onmousemove': 'A',
-      'onmouseout': 'A',
-      'onmouseover': 'A',
-      'onmouseup': 'A',
-      'onreset': 'A',
-      'onselect': 'A',
-      'onsubmit': 'A',
+      'object': '!A',
+      'onblur': '!A',
+      'onchange': '!A',
+      'onclick': '!A',
+      'onfocus': '!A',
+      'onkeydown': '!A',
+      'onkeypress': '!A',
+      'onkeyup': '!A',
+      'onload': '!A',
+      'onmousedown': '!A',
+      'onmousemove': '!A',
+      'onmouseout': '!A',
+      'onmouseover': '!A',
+      'onmouseup': '!A',
+      'onreset': '!A',
+      'onselect': '!A',
+      'onsubmit': '!A',
       'readonly': 'A',
       'rel': 'A',
       'rev': 'A',
@@ -218,11 +218,8 @@ ddLib.getFailedAttributesOfElement = function(options, element) {
   if(element.attributes.length) {
     var elementAttributes = Array.prototype.slice.call(element.attributes);
     elementAttributes.push({nodeName: '*'+element.nodeName.toLowerCase()});
-    if(element.nodeName.toLowerCase() == 'breadcrumbs'){
-      console.log('hi');
-    }
     var failedAttributes = ddLib.getFailedAttributes(elementAttributes, options);
-    var missingRequired = ddLib.missingRequiredAttrs(element.nodeName.toLowerCase(),elementAttributes);
+    var missingRequired = ddLib.findMissingAttrs(element.nodeName.toLowerCase(),elementAttributes);
     if(failedAttributes.length || missingRequired.length) {
       if(missingRequired.length) {
         failedAttributes.push({
@@ -250,6 +247,15 @@ ddLib.getFailedAttributes = function(attributes, options) {
   var failedAttributes = [];
   for(var i = 0; i < attributes.length; i++) {
     var attr = ddLib.normalizeAttribute(attributes[i].nodeName);
+    var directiveVal = ddLib.data.directiveTypes['html-directives'].directives[attr] || '';
+    if(directiveVal.indexOf('!') > -1) {
+      failedAttributes.push({
+        error: attr,
+        directiveType: 'html-directives',
+        typeError: 'ngevent'
+      });
+      continue;
+    }
     var result = ddLib.attributeExsistsInTypes(attr,options);
     var suggestion = result.typeError == 'nonexsisting' ? ddLib.getSuggestions(attr,options) : {match:''};
     if(result.typeError) {
@@ -280,7 +286,7 @@ ddLib.attributeExsistsInTypes = function(attribute, options) {
     var isTag = attribute.charAt(0) == '*';
     var isCustomDir = directiveType == 'angular-custom-directives';
     if(!isTag) {
-      directive = ddLib.directiveDetails.directiveTypes[directiveType].directives[attribute] || '';
+      directive = ddLib.data.directiveTypes[directiveType].directives[attribute] || '';
       restrict = directive.restrict || directive;
       if(restrict) {
         if(restrict.indexOf('E') > -1 && restrict.indexOf('A') < 0) {
@@ -293,7 +299,7 @@ ddLib.attributeExsistsInTypes = function(attribute, options) {
       }
     }
     else if(isTag && isCustomDir){
-      directive = ddLib.directiveDetails.directiveTypes[directiveType].directives[attribute.substring(1)] || '';
+      directive = ddLib.data.directiveTypes[directiveType].directives[attribute.substring(1)] || '';
       restrict = directive.restrict || directive;
       anyTrue = anyTrue || true;
       if(restrict && restrict.indexOf('A') > -1 && restrict.indexOf('E') < 0) {
@@ -317,7 +323,7 @@ ddLib.getSuggestions = function(attribute, options) {
     var isTag = attribute.charAt(0) == '*';
     var isCustomDir = directiveType == 'angular-custom-directives';
     if(!isTag || (isTag && isCustomDir)) {
-      var directiveTypeData = ddLib.directiveDetails.directiveTypes[directiveType].directives;
+      var directiveTypeData = ddLib.data.directiveTypes[directiveType].directives;
       var tempMatch = ddLib.findClosestMatchIn(directiveTypeData, attribute);
       if(tempMatch.min_levDist < options.tolerance && tempMatch.min_levDist < min_levDist) {
         match = tempMatch.match;
@@ -365,9 +371,9 @@ ddLib.normalizeAttribute = function(attribute) {
   return attribute.replace(/^(?:data|x)[-_:]/,'').replace(/[:_]/g,'-');
 };
 
-ddLib.missingRequiredAttrs = function(dirName, attributes) {
+ddLib.findMissingAttrs = function(dirName, attributes) {
   attributes = attributes.map(function(x){return x.nodeName;});
-  var directive = ddLib.directiveDetails.directiveTypes['angular-custom-directives'].directives[dirName];
+  var directive = ddLib.data.directiveTypes['angular-custom-directives'].directives[dirName];
   var missing = [];
   if(directive && directive.require) {
     for(var i = 0; i < directive.require.length; i++) {
@@ -415,6 +421,9 @@ ddLib.formatResults = function(failedElements) {
         case 'missingrequired':
           message = ddLib.buildMissingRequired(info, id, type);
           break;
+        case 'ngevent':
+          message = ddLib.buildNgEvent(info, id, type);
+          break;
       }
       hintLog.createErrorMessage(message, ddLib.errorNumber = ++ddLib.errorNumber, obj.domElement);
       messages.push(message);
@@ -425,14 +434,14 @@ ddLib.formatResults = function(failedElements) {
 };
 
 ddLib.buildNonExsisting = function(info, id, type) {
-  var message = ddLib.directiveDetails.directiveTypes[info.directiveType].message+type+' element'+id+'. ';
+  var message = ddLib.data.directiveTypes[info.directiveType].message+type+' element'+id+'. ';
   var error = (info.error.charAt(0) == '*') ? info.error.substring(1): info.error;
   message +='Found incorrect attribute "'+error+'" try "'+info.match+'".';
   return message;
 };
 
 ddLib.buildWrongUse = function(info, id, type) {
-  var message = ddLib.directiveDetails.directiveTypes[info.directiveType].message+type+' element'+id+'. ';
+  var message = ddLib.data.directiveTypes[info.directiveType].message+type+' element'+id+'. ';
   var error = (info.error.charAt(0) == '*') ? info.error.substring(1): info.error;
   var aecmType = (info.wrongUse.indexOf('attribute') > -1)? 'Element' : 'Attribute';
   message += aecmType+' name "'+error+'" is reserved for '+info.wrongUse+' names only.';
@@ -448,6 +457,13 @@ ddLib.buildMissingRequired = function(info, id, type) {
   });
   missing = '['+missing.substring(0,missing.length-1)+'] ';
   var message = 'Attribute'+s+missing+waswere+'found to be missing in '+type+ ' element'+id+'.';
+  return message;
+};
+
+ddLib.buildNgEvent = function(info, id, type) {
+  var ngDir = 'ng-'+info.error.substring(2);
+  var message = 'Use Angular version of "'+info.error+'" in '+type+' element'+id+
+    ' should be used. Try: "'+ngDir+'"';
   return message;
 };
 
@@ -470,7 +486,7 @@ ddLib.buildMissingRequired = function(info, id, type) {
 ddLib.setCustomDirectives = function(customDirectives) {
   customDirectives.forEach(function(directive) {
     var directiveName = directive.directiveName.replace(/([A-Z])/g, '-$1').toLowerCase();
-    ddLib.directiveDetails.directiveTypes['angular-custom-directives']
+    ddLib.data.directiveTypes['angular-custom-directives']
       .directives[directiveName] = directive;
   });
 };

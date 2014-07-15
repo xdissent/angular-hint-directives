@@ -32,10 +32,10 @@ angular.module('ngLocale').config(function($provide) {
         for(var prop in dirsObj){
           var propDashed = ddLib.camelToDashes(prop);
           if(isNaN(+propDashed) &&
-            !ddLib.directiveDetails.directiveTypes['angular-default-directives'].directives[propDashed] &&
-            !ddLib.directiveDetails.directiveTypes['html-directives'].directives[propDashed]) {
+            !ddLib.data.directiveTypes['angular-default-directives'].directives[propDashed] &&
+            !ddLib.data.directiveTypes['html-directives'].directives[propDashed]) {
             var matchRestrict = dirsObj[prop].toString().match(/restrict:\s*'(.+?)'/) || 'ACME';
-            ddLib.directiveDetails.directiveTypes['angular-default-directives']
+            ddLib.data.directiveTypes['angular-default-directives']
               .directives[propDashed] = matchRestrict[1];
           }
         }
