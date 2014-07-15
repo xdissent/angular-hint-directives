@@ -180,7 +180,7 @@ ddLib.directiveDetails = {
  **/
 ddLib.beginSearch = function(scopeElements, customDirectives, options) {
   if(!Array.isArray(scopeElements)) {
-    throw new Error("Function beginSearch must be passed an array.");
+    throw new Error('Function beginSearch must be passed an array.');
   }
   options = options || {};
   options.directiveTypes = options.directiveTypes ||
@@ -212,7 +212,7 @@ ddLib.findFailedElements = function(scopeElements, options) {
 ddLib.getFailedAttributesOfElement = function(options, element) {
   if(element.attributes.length) {
     var elementAttributes = Array.prototype.slice.call(element.attributes);
-    elementAttributes.push({nodeName: "*"+element.nodeName.toLowerCase()});
+    elementAttributes.push({nodeName: '*'+element.nodeName.toLowerCase()});
     var failedAttributes = ddLib.getFailedAttributes(elementAttributes, options);
     var missingRequired = ddLib.missingRequiredAttrs(element.nodeName.toLowerCase(),elementAttributes);
     if(failedAttributes.length || missingRequired.length) {
@@ -264,14 +264,13 @@ ddLib.getFailedAttributes = function(attributes, options) {
  *@return {} with attribute exsistance and wrong use e.g. restrict property set to elements only.
  **/
 ddLib.attributeExsistsInTypes = function(attribute, options) {
-  var allTrue = false, wrongUse = '';
+  var allTrue = false, wrongUse = '', directive, restrict;
   options.directiveTypes.forEach(function(directiveType) {
     var isTag = attribute.charAt(0) == '*';
     var isCustomDir = directiveType == 'angular-custom-directives';
     if(!isTag) {
-      // var directive = ddLib.directiveDetails.directiveTypes[directiveType].directives[attribute];
-      var directive = ddLib.directiveDetails.directiveTypes[directiveType].directives[attribute] || '';
-      var restrict = directive.restrict || directive;
+      directive = ddLib.directiveDetails.directiveTypes[directiveType].directives[attribute] || '';
+      restrict = directive.restrict || directive;
       if(restrict) {
         if(restrict.indexOf('E') > -1 && restrict.indexOf('A') < 0) {
           wrongUse = 'element';
@@ -283,8 +282,8 @@ ddLib.attributeExsistsInTypes = function(attribute, options) {
       }
     }
     else if(isTag && isCustomDir){
-      var directive = ddLib.directiveDetails.directiveTypes[directiveType].directives[attribute.substring(1)] || '';
-      var restrict = directive.restrict || directive;
+      directive = ddLib.directiveDetails.directiveTypes[directiveType].directives[attribute.substring(1)] || '';
+      restrict = directive.restrict || directive;
       if(restrict){
         allTrue = allTrue || true;
         if(restrict && restrict.indexOf('A') > -1 && restrict.indexOf('E') < 0) {
@@ -340,8 +339,8 @@ ddLib.findClosestMatchIn = function(directiveTypeData, attribute) {
   for(var directive in directiveTypeData){
     if(ddLib.areSimilarEnough(attribute,directive)) {
       var currentlevDist = ddLib.levenshteinDistance(attribute, directive);
-      var closestMatch = (currentlevDist < min_levDist)? directive : closestMatch;
-      var min_levDist = (currentlevDist < min_levDist)? currentlevDist : min_levDist;
+      closestMatch = (currentlevDist < min_levDist)? directive : closestMatch;
+      min_levDist = (currentlevDist < min_levDist)? currentlevDist : min_levDist;
     }
   }
   return {min_levDist: min_levDist, match: closestMatch};
@@ -354,7 +353,7 @@ ddLib.findClosestMatchIn = function(directiveTypeData, attribute) {
  *@return normalized attribute name
  **/
 ddLib.normalizeAttribute = function(attribute) {
-  return attribute.replace(/^(?:data|x)[-_:]/,"").replace(/[:_]/g,'-');
+  return attribute.replace(/^(?:data|x)[-_:]/,'').replace(/[:_]/g,'-');
 };
 
 ddLib.missingRequiredAttrs = function(dirName, attributes) {
@@ -511,7 +510,7 @@ ddLib.levenshteinDistance = function(s, t) {
  * @param str: string to convert formatting from camelCase to lowercase with dash after ng.
  **/
 ddLib.camelToDashes = function(str) {
- return str.replace(/([A-Z])/g, function($1){return "-"+$1.toLowerCase();});
+ return str.replace(/([A-Z])/g, function($1){return '-'+$1.toLowerCase();});
 };
 
 }((typeof module !== 'undefined' && module && module.exports) ?

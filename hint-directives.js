@@ -6,7 +6,7 @@ var customDirectives = [];
 
 angular.module('ngHintDirectives', ['ngLocale'])
   .config(['$provide', function($provide) {
-    $provide.decorator('$compile', ['$delegate','$timeout', function($delegate, $timeout) {
+    $provide.decorator('$compile', ['$delegate', function($delegate) {
       return function(elem) {
         var messages=[];
         for(var i = 0; i < elem.length; i+=2){
