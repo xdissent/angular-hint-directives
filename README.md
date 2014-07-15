@@ -4,12 +4,10 @@ Angular Hint Directives [![Build Status](https://travis-ci.org/angular/angular-h
 Angular Hint Directives lets you spend less time finding silent errors in your code and more time on actually programming. This tool is a subset of many under the [Angular Hint](https://github.com/angular/angular-hint) repository that specializes in identifying errors relating to directives. For instructions on how to incorporate the whole Angular Hint repository into your project, please refer to the link above.
 
 Angular Hint Directive identifies misspelled directives that would otherwise fail silently and notifies you of your mistake while also providing a suggestion for what you could mean. At first glance, the code below may seem to not have any errors, but the list elements would never get loaded on to the page. If the following code exsited within your loaded page, Hint Directive would alert you that you used 'ng-repaet' and that you should try 'ng-repeat'.
-```
+```html
 <div>
   <ul>
-    <li ng-repaet = 'i in [1,2,3,4]'> 
-      {{i}}
-    </li> 
+    <li ng-repaet = "i in [1,2,3,4]">{{i}}</li>
   </ul>
 </div>
 ```
@@ -26,7 +24,7 @@ directive('haBreadcrumbs', function() {
 });
 ```
 So if in your code you tried to use:
-```
+```html
 <breadcrumbs ha-breadcrumbs="['home','profile','about']"> </breadcrumbs>
 ```
 You would promtly be notified that you have used 'ha-breadcrumbs' as an attribute when its reserved for elements only and vice verse for 'breadcrumbs'.
