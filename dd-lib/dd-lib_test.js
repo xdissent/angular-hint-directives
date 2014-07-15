@@ -1,3 +1,11 @@
+/* global describe*/
+/* global ddescribe*/
+/* global it*/
+/* global iit*/
+/* global iit*/
+/* global ddLib*/
+/* global expect*/
+
 'use strict';
 describe('dd-app', function() {
 
@@ -5,24 +13,24 @@ describe('dd-app', function() {
     it('should throw if not passed an array', function() {
       var notAnArray = {};
       expect(function() {
-        ddLib.beginSearch(notAnArray)
-      }).toThrow("Function beginSearch must be passed an array.");
-    })
+        ddLib.beginSearch(notAnArray);
+      }).toThrow('Function beginSearch must be passed an array.');
+    });
     it('should return an array with the correct number of failed elements', function() {
       var elementsToTest = [
         {attributes: [{nodeName:'ng-ap'},{nodeName:'ng-hef'}], nodeName: 'DIV'},
         {attributes: [{nodeName:'ng-src'}], nodeName: 'DIV'},
         {attributes: [{nodeName:'ng-clic'}], nodeName: 'DIV'}
-      ]
+      ];
       var results = ddLib.beginSearch(elementsToTest);
       expect(results.length).toBe(3);
-    })
+    });
     it('should return an array of objects that have match and error properties', function(){
       var elementsToTest = [
         {attributes: [{nodeName:'ng-clic'}], nodeName: 'DIV'}
-      ]
+      ];
       var result = ddLib.beginSearch(elementsToTest);
-      expect(result[0].message).toBe('There was an AngularJS error in DIV element. Found '+
+      expect(result[0]).toBe('There was an AngularJS error in DIV element. Found '+
         'incorrect attribute "ng-clic" try "ng-click".');
     });
   });
@@ -36,7 +44,7 @@ describe('dd-app', function() {
       };
       var result = ddLib.getSuggestions(failedAttr, options);
       expect(result.match).toBe('ng-app');
-    })
+    });
   });
 
   describe('formatResults()', function() {
@@ -46,14 +54,15 @@ describe('dd-app', function() {
         data: [{
           directiveType: 'angular-default-directives',
           error: 'ng-ap',
-          match: 'ng-app'
+          match: 'ng-app',
+          typeError: 'nonexsisting'
         }]
-      }]
+      }];
       var messages = ddLib.formatResults(failedElements);
       var display = 'There was an AngularJS error in HTML element. Found incorrect '+
         'attribute "ng-ap" try "ng-app".';
-      expect(messages[0].message).toBe(display);
-    })
+      expect(messages[0]).toBe(display);
+    });
   });
 
   describe('getFailedAttributes()', function() {
@@ -66,7 +75,7 @@ describe('dd-app', function() {
       var results = ddLib.getFailedAttributes(elementToTest,options);
       expect(results[0].error).toBe('ng-ap');
       expect(results[1].error).toBe('ng-hef');
-    })
+    });
   });
 
   describe('findClosestMatchIn()', function() {
@@ -80,24 +89,24 @@ describe('dd-app', function() {
       expect(function() {
         ddLib.findClosestMatchIn('','toPass');
       }).toThrow('Function must be passed a defined object as first parameter.');
-    })
+    });
     it('should find the closest match from list of given attributes', function() {
       var directiveTypeData = {'ng-src':'ng-src','ng-app':'ng-app','ng-click':'ng-click'};
       var attribute = 'ng-ap';
       var result = ddLib.findClosestMatchIn(directiveTypeData,attribute);
       expect(result.match).toBe('ng-app');
-    })
+    });
   });
 
   describe('normalizeAttribute', function() {
     it('should normalize attribute by stripping optional parameters', function() {
       var testAttrs = ['data:ng-click','x:ng:src','ng:href'];
-      testAttrs = testAttrs.map(function(x){return ddLib.normalizeAttribute(x)});
+      testAttrs = testAttrs.map(function(x){return ddLib.normalizeAttribute(x);});
       expect(testAttrs[0]).toBe('ng-click');
       expect(testAttrs[1]).toBe('ng-src');
       expect(testAttrs[2]).toBe('ng-href');
-    })
-  })
+    });
+  });
   /* Upper and lower bounds of LD
       It is always at least the difference of the sizes of the two strings.
       It is at most the length of the longer string.
@@ -114,22 +123,22 @@ describe('dd-app', function() {
       expect(function() {
         ddLib.levenshteinDistance(undefined,undefined);
       }).toThrow('Function must be passed two strings, given: undefined and undefined.');
-    })
+    });
     it('should return the proper levenshtein distance between two strings', function() {
-      var test1 = ddLib.levenshteinDistance("nf-ap","ng-app");
-      var test2 = ddLib.levenshteinDistance("","");
+      var test1 = ddLib.levenshteinDistance('nf-ap','ng-app');
+      var test2 = ddLib.levenshteinDistance('','');
       var bound1 = ddLib.levenshteinDistance('ng-onmouseo','ng-onmouseover');
       var bound2 = ddLib.levenshteinDistance('asdf','qwertyuiop');
       var bound3 = ddLib.levenshteinDistance('ng-href','ng-href');
-      expect(test1).toBe(2)
-      expect(test2).toBe(0)
-      expect(bound1).toBe(3)
-      expect(bound2).toBe(10)
-      expect(bound3).toBe(0)
-    })
+      expect(test1).toBe(2);
+      expect(test2).toBe(0);
+      expect(bound1).toBe(3);
+      expect(bound2).toBe(10);
+      expect(bound3).toBe(0);
+    });
   });
 
-})
+});
 
 
 

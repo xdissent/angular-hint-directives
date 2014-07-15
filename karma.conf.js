@@ -17,8 +17,9 @@ module.exports = function(config) {
     files: [
       'bower_components/angular/angular.js',
       'bower_components/angular-mocks/angular-mocks.js',
-      'hint-directives.js',
-      '*_test.js'
+      'dist/hint-directives.js',
+      'dd-lib/dd-lib_test.js',
+      'hint-directives_test.js',
     ],
 
 

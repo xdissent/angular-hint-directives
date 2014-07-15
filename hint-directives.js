@@ -1,3 +1,5 @@
+/* global angular */
+/* global require */
 'use strict';
 
 var ddLib = require('./dd-lib/dd-lib');
@@ -23,7 +25,7 @@ angular.module('ngHintDirectives', ['ngLocale'])
 angular.module('ngLocale').config(function($provide) {
   var originalProvider = $provide.provider;
   $provide.provider = function(token, provider) {
-    var provider = originalProvider.apply($provide, arguments);
+    provider = originalProvider.apply($provide, arguments);
     if (token === '$compile') {
       var originalProviderDirective = provider.directive;
       provider.directive = function(dirsObj) {
@@ -55,10 +57,9 @@ angular.module = function() {
     var pairs = ddLib.getKeysAndValues(factoryStr);
     pairs.map(function(pair){customDirectives.push(pair);});
 
-
     var matchRestrict = factoryStr.match(/restrict:\s*'(.+?)'/);
     var restrict = matchRestrict[1] || 'ACME';
-    var directive = {directiveName: directiveName, restrict: 'AE',  require:pairs};
+    var directive = {directiveName: directiveName, restrict: restrict,  require:pairs};
     customDirectives.push(directive);
 
     arguments[1][0] = function () {

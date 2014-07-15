@@ -218,6 +218,9 @@ ddLib.getFailedAttributesOfElement = function(options, element) {
   if(element.attributes.length) {
     var elementAttributes = Array.prototype.slice.call(element.attributes);
     elementAttributes.push({nodeName: '*'+element.nodeName.toLowerCase()});
+    if(element.nodeName.toLowerCase() == 'breadcrumbs'){
+      console.log('hi');
+    }
     var failedAttributes = ddLib.getFailedAttributes(elementAttributes, options);
     var missingRequired = ddLib.missingRequiredAttrs(element.nodeName.toLowerCase(),elementAttributes);
     if(failedAttributes.length || missingRequired.length) {
@@ -248,13 +251,13 @@ ddLib.getFailedAttributes = function(attributes, options) {
   for(var i = 0; i < attributes.length; i++) {
     var attr = ddLib.normalizeAttribute(attributes[i].nodeName);
     var result = ddLib.attributeExsistsInTypes(attr,options);
-    var suggestion = !result.exsists ? ddLib.getSuggestions(attr,options) : {match:''};
-    if(!result.exsists || suggestion.match) {
+    var suggestion = result.typeError == 'nonexsisting' ? ddLib.getSuggestions(attr,options) : {match:''};
+    if(result.typeError) {
       failedAttributes.push({
         match: suggestion.match || '',
         wrongUse: result.wrongUse || '',
         error: attr,
-        directiveType: suggestion.directiveType,
+        directiveType: suggestion.directiveType || 'angular-custom-directives',
         typeError: result.typeError
       });
     }
@@ -397,6 +400,7 @@ ddLib.getKeysAndValues = function(str) {
  *@return [] of failed messages.
  **/
 ddLib.formatResults = function(failedElements) {
+  var messages = [];
   failedElements.forEach(function(obj) {
     obj.data.forEach(function(info) {
       var id = (obj.domElement.id) ? ' with id: #'+obj.domElement.id : '';
@@ -413,21 +417,24 @@ ddLib.formatResults = function(failedElements) {
           break;
       }
       hintLog.createErrorMessage(message, ddLib.errorNumber = ++ddLib.errorNumber, obj.domElement);
+      messages.push(message);
+      ddLib.testMessage(message);
     });
   });
+  return messages;
 };
 
-ddLib.buildWrongUse = function(info, id, type) {
+ddLib.buildNonExsisting = function(info, id, type) {
   var message = ddLib.directiveDetails.directiveTypes[info.directiveType].message+type+' element'+id+'. ';
   var error = (info.error.charAt(0) == '*') ? info.error.substring(1): info.error;
   message +='Found incorrect attribute "'+error+'" try "'+info.match+'".';
   return message;
 };
 
-ddLib.buildNonExsisting = function(info, id, type) {
+ddLib.buildWrongUse = function(info, id, type) {
   var message = ddLib.directiveDetails.directiveTypes[info.directiveType].message+type+' element'+id+'. ';
   var error = (info.error.charAt(0) == '*') ? info.error.substring(1): info.error;
-  var aecmType = (info.wrongUse.indexOf('attribute') > -1)? 'Element' : 'attribute';
+  var aecmType = (info.wrongUse.indexOf('attribute') > -1)? 'Element' : 'Attribute';
   message += aecmType+' name "'+error+'" is reserved for '+info.wrongUse+' names only.';
   return message;
 };
@@ -445,16 +452,16 @@ ddLib.buildMissingRequired = function(info, id, type) {
 };
 
 
-ddLib.displayResults = function(messages) {
-  if(messages.length) {
-    console.groupCollapsed('Angular Hint: Directives');
-    messages.forEach(function(error) {
-      console.warn(error.message);
-      console.log(error.domElement);
-    });
-    console.groupEnd();
-  }
-};
+// ddLib.displayResults = function(messages) {
+//   if(messages.length) {
+//     console.groupCollapsed('Angular Hint: Directives');
+//     messages.forEach(function(error) {
+//       console.warn(error.message);
+//       console.log(error.domElement);
+//     });
+//     console.groupEnd();
+//   }
+// };
 
 
 /**
@@ -534,6 +541,10 @@ ddLib.levenshteinDistance = function(s, t) {
  **/
 ddLib.camelToDashes = function(str) {
  return str.replace(/([A-Z])/g, function($1){return '-'+$1.toLowerCase();});
+};
+
+ddLib.testMessage = function(str) {
+  return str;
 };
 
 }((typeof module !== 'undefined' && module && module.exports) ?
