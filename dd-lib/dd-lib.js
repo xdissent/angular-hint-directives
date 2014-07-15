@@ -222,7 +222,11 @@ ddLib.getFailedAttributesOfElement = function(options, element) {
     var missingRequired = ddLib.missingRequiredAttrs(element.nodeName.toLowerCase(),elementAttributes);
     if(failedAttributes.length || missingRequired.length) {
       if(missingRequired.length) {
-        failedAttributes.push({directiveType: 'angular-custom-directive', missing:missingRequired});
+        failedAttributes.push({
+            directiveType: 'angular-custom-directive',
+            missing: missingRequired,
+            typeError: 'missingrequired'
+          });
       }
       return {
         domElement: element,
@@ -244,16 +248,15 @@ ddLib.getFailedAttributes = function(attributes, options) {
   for(var i = 0; i < attributes.length; i++) {
     var attr = ddLib.normalizeAttribute(attributes[i].nodeName);
     var result = ddLib.attributeExsistsInTypes(attr,options);
-    if(!result.exsists) {
-      var suggestion = ddLib.getSuggestions(attr,options);
-      if(suggestion){
-        failedAttributes.
-          push({match: suggestion.match, error: attr, directiveType:suggestion.directiveType});
-      }
-    }
-    else if(result.wrongUse) {
-      failedAttributes.
-        push({wrongUse:result.wrongUse, error: attr, directiveType: 'angular-custom-directives'});
+    var suggestion = !result.exsists ? ddLib.getSuggestions(attr,options) : {match:''};
+    if(!result.exsists || suggestion.match) {
+      failedAttributes.push({
+        match: suggestion.match || '',
+        wrongUse: result.wrongUse || '',
+        error: attr,
+        directiveType: suggestion.directiveType,
+        typeError: result.typeError
+      });
     }
   }
   return failedAttributes;
@@ -269,7 +272,7 @@ ddLib.getFailedAttributes = function(attributes, options) {
  *@return {} with attribute exsistance and wrong use e.g. restrict property set to elements only.
  **/
 ddLib.attributeExsistsInTypes = function(attribute, options) {
-  var allTrue = false, wrongUse = '', directive, restrict;
+  var anyTrue = false, wrongUse = '', directive, restrict;
   options.directiveTypes.forEach(function(directiveType) {
     var isTag = attribute.charAt(0) == '*';
     var isCustomDir = directiveType == 'angular-custom-directives';
@@ -283,22 +286,20 @@ ddLib.attributeExsistsInTypes = function(attribute, options) {
         if(restrict.indexOf('C') > -1 && restrict.indexOf('A') < 0) {
           wrongUse = (wrongUse) ? 'element and class' : 'class';
         }
-        allTrue = allTrue || true;
+        anyTrue = anyTrue || true;
       }
     }
     else if(isTag && isCustomDir){
       directive = ddLib.directiveDetails.directiveTypes[directiveType].directives[attribute.substring(1)] || '';
       restrict = directive.restrict || directive;
-      if(restrict){
-        allTrue = allTrue || true;
-        if(restrict && restrict.indexOf('A') > -1 && restrict.indexOf('E') < 0) {
-          wrongUse = 'attribute';
-        }
+      anyTrue = anyTrue || true;
+      if(restrict && restrict.indexOf('A') > -1 && restrict.indexOf('E') < 0) {
+        wrongUse = 'attribute';
       }
     }
   });
-
-  return {exsists: allTrue, wrongUse: wrongUse};
+  var typeError = wrongUse? 'wronguse':'' || !anyTrue ? 'nonexsisting' : '' || '';
+  return {exsists: anyTrue, wrongUse: wrongUse, typeError: typeError};
 };
 
 /**
@@ -322,7 +323,7 @@ ddLib.getSuggestions = function(attribute, options) {
       }
     }
   });
-  return (match)? {match:match, directiveType:dirType}: null;
+  return {match:match, directiveType:dirType};
 };
 
 /**
@@ -397,33 +398,62 @@ ddLib.getKeysAndValues = function(str) {
  **/
 ddLib.formatResults = function(failedElements) {
   failedElements.forEach(function(obj) {
-    obj.data.forEach(function(attr) {
+    obj.data.forEach(function(info) {
       var id = (obj.domElement.id) ? ' with id: #'+obj.domElement.id : '';
       var type = obj.domElement.nodeName, message;
-      if(attr.error) {
-        message = ddLib.directiveDetails.directiveTypes[attr.directiveType].message+type+' element'+id+'. ';
-        var error = (attr.error.charAt(0) == '*') ? attr.error.substring(1): attr.error;
-        if(!attr.wrongUse) {
-          message +='Found incorrect attribute "'+error+'" try "'+attr.match+'".';
-        }
-        else {
-          var aecmType = (attr.wrongUse.indexOf('attribute') > -1)? 'Element' : 'Attribute';
-          message += aecmType+' name "'+error+'" is reserved for '+attr.wrongUse+' names only.';
-        }
-      }
-      else if(attr.missing){
-        var s = attr.missing.length == 1 ? ' ' : 's ';
-        var waswere = attr.missing.length == 1 ? 'was ' : 'were ';
-        var missing = '';
-        attr.missing.forEach(function(str){
-          missing += '"'+str+'",';
-        });
-        missing = '['+missing.substring(0,missing.length-1)+'] ';
-        message = 'Attribute'+s+missing+waswere+'found to be missing in '+type+ ' element'+id+'.';
+      switch (info.typeError) {
+        case 'wronguse':
+          message = ddLib.buildWrongUse(info, id, type);
+          break;
+        case 'nonexsisting':
+          message = ddLib.buildNonExsisting(info, id, type);
+          break;
+        case 'missingrequired':
+          message = ddLib.buildMissingRequired(info, id, type);
+          break;
       }
       hintLog.createErrorMessage(message, ddLib.errorNumber = ++ddLib.errorNumber, obj.domElement);
     });
   });
+};
+
+ddLib.buildWrongUse = function(info, id, type) {
+  var message = ddLib.directiveDetails.directiveTypes[info.directiveType].message+type+' element'+id+'. ';
+  var error = (info.error.charAt(0) == '*') ? info.error.substring(1): info.error;
+  message +='Found incorrect attribute "'+error+'" try "'+info.match+'".';
+  return message;
+};
+
+ddLib.buildNonExsisting = function(info, id, type) {
+  var message = ddLib.directiveDetails.directiveTypes[info.directiveType].message+type+' element'+id+'. ';
+  var error = (info.error.charAt(0) == '*') ? info.error.substring(1): info.error;
+  var aecmType = (info.wrongUse.indexOf('attribute') > -1)? 'Element' : 'attribute';
+  message += aecmType+' name "'+error+'" is reserved for '+info.wrongUse+' names only.';
+  return message;
+};
+
+ddLib.buildMissingRequired = function(info, id, type) {
+  var s = info.missing.length == 1 ? ' ' : 's ';
+  var waswere = info.missing.length == 1 ? 'was ' : 'were ';
+  var missing = '';
+  info.missing.forEach(function(str){
+    missing += '"'+str+'",';
+  });
+  missing = '['+missing.substring(0,missing.length-1)+'] ';
+  var message = 'Attribute'+s+missing+waswere+'found to be missing in '+type+ ' element'+id+'.';
+  return message;
+};
+
+
+ddLib.displayResults = function(messages) {
+  if(messages.length) {
+    console.groupCollapsed('Angular Hint: Directives');
+    messages.forEach(function(error) {
+      console.warn(error.message);
+      console.log(error.domElement);
+    });
+    console.groupEnd();
+  }
 };
 
 
