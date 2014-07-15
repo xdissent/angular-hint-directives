@@ -1,6 +1,6 @@
 'use strict';
 
-//var ddLib = require('./dd-lib/dd-lib');
+var ddLib = require('./dd-lib/dd-lib');
 var customDirectives = [];
 
 

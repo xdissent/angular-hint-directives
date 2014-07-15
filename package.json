@@ -26,12 +26,10 @@
   "homepage": "https://github.com/angular/angular-hint-directives",
   "dependencies": {
     "browserify": "^4.2.0",
-    "gulp": "^3.8.5",
+    "gulp": "^3.8.6",
     "karma-bro": "^0.6.0",
     "karma-coverage": "^0.2.4",
+    "vinyl-source-stream": "^0.1.1",
     "watchify": "^0.10.2"
-  }
-  "jshintConfig": {
-    "predef": ["angular","console","ddlib"]
   }
 }
