@@ -1,6 +1,8 @@
 'use strict';
 describe('dd-app', function() {
 
+  var ddLib = require('./dd-lib');
+
   describe('beginSearch()', function() {
     it('should throw if not passed an array', function() {
       var notAnArray = {};
