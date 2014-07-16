@@ -4,13 +4,13 @@ Angular Hint Directives [![Build Status](https://travis-ci.org/angular/angular-h
 Angular Hint Directives lets you spend less time finding silent errors in your code and more time actually programming. This tool is a subset of many under the [Angular Hint](https://github.com/angular/angular-hint) repository that specializes in identifying errors relating to directives. For instructions on how to incorporate the whole Angular Hint repository into your project, please refer to the link above.
 
 #### Angular Hint Directive identifies:
-  - [Misspelled HTML attributes and tags](#Misspelled-Directives-and-Attributes)
-  - [Misspelled directives and attributes (custom and core)](#Misspelled-Directives-and-Attributes)
-  - [Missing required attributes declared within the scope property](#Missing-Required-Attributes)
-  - [Using directives against their restrict property](#Following-Restrict-Property)
-  - [Using deprecated options such as 'replace'](#Using-Deprecated-Options)
-  - [Using HTML event attributes instead of Angular event directives (onclick vs. ngClick)](#Using-Angular Event-Directives)
-  - [Declaring directives with no namespace](#Missing-Namespace)
+  - [Misspelled HTML attributes and tags](#misspelled-directives-and-attributes)
+  - [Misspelled directives and attributes (custom and core)](#misspelled-directives-and-attributes)
+  - [Missing required attributes declared within the scope property](#missing-required-attributes)
+  - [Using directives against their restrict property](#following-restrict-property)
+  - [Using deprecated options such as 'replace'](#using-deprecated-options)
+  - [Using HTML event attributes instead of Angular event directives (onclick vs. ngClick)](#using-angular-event-directives)
+  - [Declaring directives with no namespace](#missing-namespace)
 
 
 #### Misspelled Directives and Attributes
