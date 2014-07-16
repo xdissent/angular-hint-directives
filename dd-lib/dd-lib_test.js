@@ -1,11 +1,3 @@
-/* global describe*/
-/* global ddescribe*/
-/* global it*/
-/* global iit*/
-/* global iit*/
-/* global ddLib*/
-/* global expect*/
-
 'use strict';
 describe('dd-app', function() {
 

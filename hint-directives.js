@@ -1,5 +1,3 @@
-/* global angular */
-/* global require */
 'use strict';
 
 var ddLib = require('./dd-lib/dd-lib');
@@ -50,6 +48,10 @@ angular.module = function() {
   var module = originalAngularModule.apply(this, arguments);
   var originalDirective = module.directive;
   module.directive = function(directiveName, directiveFactory) {
+
+    if(!ddLib.hasNameSpace(directiveName)) {
+      ddLib.buildNameSpace(directiveName);
+    }
     var originalDirectiveFactory = typeof directiveFactory === 'function' ? directiveFactory :
         directiveFactory[directiveFactory.length - 1];
     var factoryStr = originalDirectiveFactory.toString();

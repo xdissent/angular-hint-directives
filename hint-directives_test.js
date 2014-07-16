@@ -1,15 +1,3 @@
-/* global describe*/
-/* global ddescribe*/
-/* global beforeEach*/
-/* global module*/
-/* global spyOn*/
-/* global console*/
-/* global inject*/
-/* global it*/
-/* global iit*/
-/* global angular*/
-/* global ddLib*/
-/* global expect*/
 'use strict';
 
 describe('ddLib and Angular Integration Test', function() {

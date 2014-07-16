@@ -5,7 +5,7 @@ directive('haBreadcrumbs', function() {
     templateUrl: 'components/breadcrumbs/breadcrumbs.html',
     scope: {
       breadcrumbs: '=',
-      bar: '@tree'
+      info: '@'
     }
   };
 });
