@@ -191,7 +191,7 @@ ddLib.beginSearch = function(scopeElements, customDirectives, options) {
   options.directiveTypes = options.directiveTypes ||
     ['html-directives','angular-default-directives','angular-custom-directives'];
   options.tolerance = options.tolerance || 4;
-  if(customDirectives.length) {
+  if (customDirectives && customDirectives.length) {
     ddLib.setCustomDirectives(customDirectives);
   }
   var failedElements = ddLib.findFailedElements(scopeElements, options);
