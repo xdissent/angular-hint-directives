@@ -591,8 +591,3 @@ String.prototype.has = function(str) {
 
 }((typeof module !== 'undefined' && module && module.exports) ?
       (module.exports = window.ddLib = {}) : (window.ddLib = {}) ));
-
-
-
-
-
