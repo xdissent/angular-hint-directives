@@ -257,7 +257,8 @@ ddLib.getFailedAttributes = function(attributes, options) {
       continue;
     }
     var result = ddLib.attributeExsistsInTypes(attr,options);
-    var suggestion = result.typeError == 'nonexsisting' ? ddLib.getSuggestions(attr,options) : {match:''};
+    var suggestion = result.typeError === 'nonexsisting' ?
+      ddLib.getSuggestions(attr,options) : {match:''};
     if(result.typeError) {
       failedAttributes.push({
         match: suggestion.match || '',
@@ -283,8 +284,8 @@ ddLib.getFailedAttributes = function(attributes, options) {
 ddLib.attributeExsistsInTypes = function(attribute, options) {
   var anyTrue = false, wrongUse = '', directive, restrict;
   options.directiveTypes.forEach(function(directiveType) {
-    var isTag = attribute.charAt(0) == '*';
-    var isCustomDir = directiveType == 'angular-custom-directives';
+    var isTag = attribute.charAt(0) === '*';
+    var isCustomDir = directiveType === 'angular-custom-directives';
     if(!isTag) {
       directive = ddLib.data.directiveTypes[directiveType].directives[attribute] || '';
       restrict = directive.restrict || directive;
@@ -320,8 +321,8 @@ ddLib.attributeExsistsInTypes = function(attribute, options) {
 ddLib.getSuggestions = function(attribute, options) {
   var min_levDist = Infinity, match = '', dirType = '';
   options.directiveTypes.forEach(function(directiveType) {
-    var isTag = attribute.charAt(0) == '*';
-    var isCustomDir = directiveType == 'angular-custom-directives';
+    var isTag = attribute.charAt(0) === '*';
+    var isCustomDir = directiveType === 'angular-custom-directives';
     if(!isTag || (isTag && isCustomDir)) {
       var directiveTypeData = ddLib.data.directiveTypes[directiveType].directives;
       var tempMatch = ddLib.findClosestMatchIn(directiveTypeData, attribute);
@@ -343,11 +344,11 @@ ddLib.getSuggestions = function(attribute, options) {
  *@return {} with Levenshtein Distance and name of the closest match to given attribute.
  **/
 ddLib.findClosestMatchIn = function(directiveTypeData, attribute) {
-  if(typeof attribute != 'string') {
+  if(typeof attribute !== 'string') {
     throw new Error('Function must be passed a string as second parameter.');
   }
   if((directiveTypeData === null || directiveTypeData === undefined) ||
-    typeof directiveTypeData != 'object') {
+    typeof directiveTypeData !== 'object') {
     throw new Error('Function must be passed a defined object as first parameter.');
   }
   var min_levDist = Infinity, closestMatch = '';
@@ -393,7 +394,7 @@ ddLib.getKeysAndValues = function(str) {
     pairs.push({key:temp[1],value:temp[2]});
   });
   pairs.forEach(function(pair){
-    var name = (pair.value=='=')||(pair.value=='@')? pair.key : pair.value.substring(1);
+    var name = (pair.value === '=') || (pair.value === '@')? pair.key : pair.value.substring(1);
     customDirectives.push({directiveName: name , restrict:'A'});
   });
   return customDirectives;
@@ -435,22 +436,22 @@ ddLib.formatResults = function(failedElements) {
 
 ddLib.buildNonExsisting = function(info, id, type) {
   var message = ddLib.data.directiveTypes[info.directiveType].message+type+' element'+id+'. ';
-  var error = (info.error.charAt(0) == '*') ? info.error.substring(1): info.error;
+  var error = (info.error.charAt(0) === '*') ? info.error.substring(1): info.error;
   message +='Found incorrect attribute "'+error+'" try "'+info.match+'".';
   return message;
 };
 
 ddLib.buildWrongUse = function(info, id, type) {
   var message = ddLib.data.directiveTypes[info.directiveType].message+type+' element'+id+'. ';
-  var error = (info.error.charAt(0) == '*') ? info.error.substring(1): info.error;
+  var error = (info.error.charAt(0) === '*') ? info.error.substring(1): info.error;
   var aecmType = (info.wrongUse.indexOf('attribute') > -1)? 'Element' : 'Attribute';
   message += aecmType+' name "'+error+'" is reserved for '+info.wrongUse+' names only.';
   return message;
 };
 
 ddLib.buildMissingRequired = function(info, id, type) {
-  var s = info.missing.length == 1 ? ' ' : 's ';
-  var waswere = info.missing.length == 1 ? 'was ' : 'were ';
+  var s = info.missing.length === 1 ? ' ' : 's ';
+  var waswere = info.missing.length === 1 ? 'was ' : 'were ';
   var missing = '';
   info.missing.forEach(function(str){
     missing += '"'+str+'",';
@@ -537,12 +538,12 @@ ddLib.levenshteinDistance = function(s, t) {
     var n = s.length;
     var m = t.length;
 
-    if (n === 0) return m;
-    if (m === 0) return n;
+    if (n === 0) {return m;}
+    if (m === 0) {return n;}
 
-    for (var i = n; i >= 0; i--) d[i] = [];
-    for (var i = n; i >= 0; i--) d[i][0] = i;
-    for (var j = m; j >= 0; j--) d[0][j] = j;
+    for (var ii = n; ii >= 0; ii--) { d[ii] = []; }
+    for (var ii = n; ii >= 0; ii--) { d[ii][0] = ii; }
+    for (var jj = m; jj >= 0; jj--) { d[0][jj] = jj; }
     for (var i = 1; i <= n; i++) {
       var s_i = s.charAt(i - 1);
 
