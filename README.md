@@ -28,7 +28,7 @@ Angular Hint Directive identifies whether you include all variables declared thr
 angular.module('breadcrumbs').
 directive('haBreadcrumbs', function() {
   return {
-    restrict: 'E',
+    restrict: 'E',g
     templateUrl: 'components/breadcrumbs/breadcrumbs.html',
     scope: {
       breadcrumbs: '=',
