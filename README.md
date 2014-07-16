@@ -18,7 +18,7 @@ Angular Hint Directive identifies misspelled directives that would otherwise fai
 ```html
 <div>
   <ul>
-    <li ng-repaet = "i in [1,2,3,4]">{{i}}</li>
+    <li ng-repaet="i in [1,2,3,4]">{{i}}</li>
   </ul>
 </div>
 ```
