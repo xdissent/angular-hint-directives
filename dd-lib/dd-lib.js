@@ -191,7 +191,7 @@ ddLib.beginSearch = function(scopeElements, customDirectives, options) {
   options.directiveTypes = options.directiveTypes ||
     ['html-directives','angular-default-directives','angular-custom-directives'];
   options.tolerance = options.tolerance || 4;
-  if(customDirectives) {
+  if(customDirectives.length) {
     ddLib.setCustomDirectives(customDirectives);
   }
   var failedElements = ddLib.findFailedElements(scopeElements, options);
@@ -216,13 +216,16 @@ ddLib.findFailedElements = function(scopeElements, options) {
  **/
 ddLib.getFailedAttributesOfElement = function(options, element) {
   if(element.attributes.length) {
-    var elementAttributes = Array.prototype.slice.call(element.attributes);
-    elementAttributes.push({nodeName: '*'+element.nodeName.toLowerCase()});
-    var failedAttributes = ddLib.getFailedAttributes(elementAttributes, options);
-    var missingRequired = ddLib.findMissingAttrs(element.nodeName.toLowerCase(),elementAttributes);
-    if(failedAttributes.length || missingRequired.length) {
+    var eleName = element.nodeName.toLowerCase();
+    var eleAttrs = Array.prototype.slice.call(element.attributes);
+    eleAttrs.push({
+      nodeName: '*'+eleName
+    });
+    var failedAttrs = ddLib.getFailedAttributes(eleAttrs, options);
+    var missingRequired = ddLib.findMissingAttrs(eleName,eleAttrs);
+    if(failedAttrs.length || missingRequired.length) {
       if(missingRequired.length) {
-        failedAttributes.push({
+        failedAttrs.push({
             directiveType: 'angular-custom-directive',
             missing: missingRequired,
             typeError: 'missingrequired'
@@ -230,7 +233,7 @@ ddLib.getFailedAttributesOfElement = function(options, element) {
       }
       return {
         domElement: element,
-        data: failedAttributes
+        data: failedAttrs
       };
     }
   }
@@ -244,12 +247,12 @@ ddLib.getFailedAttributesOfElement = function(options, element) {
  *@return [] of failedAttributes with their respective suggestions and directiveTypes
  **/
 ddLib.getFailedAttributes = function(attributes, options) {
-  var failedAttributes = [];
+  var failedAttrs = [];
   for(var i = 0; i < attributes.length; i++) {
     var attr = ddLib.normalizeAttribute(attributes[i].nodeName);
-    var directiveVal = ddLib.data.directiveTypes['html-directives'].directives[attr] || '';
-    if(directiveVal.indexOf('!') > -1) {
-      failedAttributes.push({
+    var dirVal = ddLib.data.directiveTypes['html-directives'].directives[attr] || '';
+    if(dirVal.has('!')) {
+      failedAttrs.push({
         error: attr,
         directiveType: 'html-directives',
         typeError: 'ngevent'
@@ -260,7 +263,7 @@ ddLib.getFailedAttributes = function(attributes, options) {
     var suggestion = result.typeError === 'nonexsisting' ?
       ddLib.getSuggestions(attr,options) : {match:''};
     if(result.typeError) {
-      failedAttributes.push({
+      failedAttrs.push({
         match: suggestion.match || '',
         wrongUse: result.wrongUse || '',
         error: attr,
@@ -269,7 +272,7 @@ ddLib.getFailedAttributes = function(attributes, options) {
       });
     }
   }
-  return failedAttributes;
+  return failedAttrs;
 };
 
 /**
@@ -282,28 +285,28 @@ ddLib.getFailedAttributes = function(attributes, options) {
  *@return {} with attribute exsistance and wrong use e.g. restrict property set to elements only.
  **/
 ddLib.attributeExsistsInTypes = function(attribute, options) {
-  var anyTrue = false, wrongUse = '', directive, restrict;
-  options.directiveTypes.forEach(function(directiveType) {
+  var anyTrue = false, wrongUse = '', directive, restrictProp;
+  options.directiveTypes.forEach(function(dirType) {
     var isTag = attribute.charAt(0) === '*';
-    var isCustomDir = directiveType === 'angular-custom-directives';
+    var isCustomDir = dirType === 'angular-custom-directives';
     if(!isTag) {
-      directive = ddLib.data.directiveTypes[directiveType].directives[attribute] || '';
-      restrict = directive.restrict || directive;
-      if(restrict) {
-        if(restrict.indexOf('E') > -1 && restrict.indexOf('A') < 0) {
+      directive = ddLib.data.directiveTypes[dirType].directives[attribute] || '';
+      restrictProp = directive.restrict || directive;
+      if(restrictProp) {
+        if(restrictProp.has('E') && !restrictProp.has('A')) {
           wrongUse = 'element';
         }
-        if(restrict.indexOf('C') > -1 && restrict.indexOf('A') < 0) {
+        if(restrictProp.has('C') && !restrictProp.has('A')) {
           wrongUse = (wrongUse) ? 'element and class' : 'class';
         }
         anyTrue = anyTrue || true;
       }
     }
     else if(isTag && isCustomDir){
-      directive = ddLib.data.directiveTypes[directiveType].directives[attribute.substring(1)] || '';
-      restrict = directive.restrict || directive;
+      directive = ddLib.data.directiveTypes[dirType].directives[attribute.substring(1)] || '';
+      restrictProp = directive.restrict || directive;
       anyTrue = anyTrue || true;
-      if(restrict && restrict.indexOf('A') > -1 && restrict.indexOf('E') < 0) {
+      if(restrictProp && restrictProp.has('A') && !restrictProp.has('E')) {
         wrongUse = 'attribute';
       }
     }
@@ -444,7 +447,7 @@ ddLib.buildNonExsisting = function(info, id, type) {
 ddLib.buildWrongUse = function(info, id, type) {
   var message = ddLib.data.directiveTypes[info.directiveType].message+type+' element'+id+'. ';
   var error = (info.error.charAt(0) === '*') ? info.error.substring(1): info.error;
-  var aecmType = (info.wrongUse.indexOf('attribute') > -1)? 'Element' : 'Attribute';
+  var aecmType = (info.wrongUse.has('attribute'))? 'Element' : 'Attribute';
   message += aecmType+' name "'+error+'" is reserved for '+info.wrongUse+' names only.';
   return message;
 };
@@ -480,17 +483,6 @@ ddLib.buildReplaceOption = function(directiveName) {
   var domElement = '<'+directiveName+'> </'+directiveName+'>';
   hintLog.createErrorMessage(message, hintLog.findLineNumber(2), domElement);
 };
-
-// ddLib.displayResults = function(messages) {
-//   if(messages.length) {
-//     console.groupCollapsed('Angular Hint: Directives');
-//     messages.forEach(function(error) {
-//       console.warn(error.message);
-//       console.log(error.domElement);
-//     });
-//     console.groupEnd();
-//   }
-// };
 
 
 /**
@@ -591,6 +583,10 @@ ddLib.hasNameSpace = function(str) {
 
 ddLib.hasReplaceOption = function(facStr) {
   return facStr.match(/replace\s*:/);
+};
+
+String.prototype.has = function(str) {
+  return this.indexOf(str) >= 0;
 };
 
 }((typeof module !== 'undefined' && module && module.exports) ?
