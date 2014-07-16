@@ -473,6 +473,13 @@ ddLib.buildNameSpace = function(directiveName) {
   hintLog.createErrorMessage(message, hintLog.findLineNumber(2), domElement);
 };
 
+ddLib.buildReplaceOption = function(directiveName) {
+  var message = 'The use of "replace" in directive factories is deprecated,'+
+    ' and it was found in "'+directiveName+'".';
+  var domElement = '<'+directiveName+'> </'+directiveName+'>';
+  hintLog.createErrorMessage(message, hintLog.findLineNumber(2), domElement);
+};
+
 // ddLib.displayResults = function(messages) {
 //   if(messages.length) {
 //     console.groupCollapsed('Angular Hint: Directives');
@@ -557,6 +564,15 @@ ddLib.levenshteinDistance = function(s, t) {
     return d[n][m];
 };
 
+ddLib.checkPrelimErrors = function(dirName, dirFacStr) {
+  if(!ddLib.hasNameSpace(dirName)) {
+    ddLib.buildNameSpace(dirName);
+  }
+  if(ddLib.hasReplaceOption(dirFacStr)) {
+    ddLib.buildReplaceOption(dirName);
+  }
+};
+
 /**
  * @param str: string to convert formatting from camelCase to lowercase with dash after ng.
  **/
@@ -572,5 +588,14 @@ ddLib.hasNameSpace = function(str) {
   return str.toLowerCase() !== str;
 };
 
+ddLib.hasReplaceOption = function(facStr) {
+  return facStr.match(/replace\s*:/);
+};
+
 }((typeof module !== 'undefined' && module && module.exports) ?
       (module.exports = window.ddLib = {}) : (window.ddLib = {}) ));
+
+
+
+
+

@@ -48,13 +48,11 @@ angular.module = function() {
   var module = originalAngularModule.apply(this, arguments);
   var originalDirective = module.directive;
   module.directive = function(directiveName, directiveFactory) {
-
-    if(!ddLib.hasNameSpace(directiveName)) {
-      ddLib.buildNameSpace(directiveName);
-    }
     var originalDirectiveFactory = typeof directiveFactory === 'function' ? directiveFactory :
         directiveFactory[directiveFactory.length - 1];
     var factoryStr = originalDirectiveFactory.toString();
+
+    ddLib.checkPrelimErrors(directiveName,factoryStr);
 
     var pairs = ddLib.getKeysAndValues(factoryStr);
     pairs.map(function(pair){customDirectives.push(pair);});
