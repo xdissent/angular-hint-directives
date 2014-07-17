@@ -263,9 +263,6 @@ ddLib.getFailedAttributes = function(attributes, options) {
       });
       continue;
     }
-    if(attr == 'ng-show'){
-      console.log(attr);
-    }
     if(!mutExPairFound && ddLib.isMutExclDir(attr) && ddLib.hasMutExclPair(attr,attributes)) {
       failedAttrs.push({
         error: attr,
@@ -408,7 +405,7 @@ ddLib.findMissingAttrs = function(dirName, attributes) {
 ddLib.getKeysAndValues = function(str) {
   var customDirectives = [], pairs = [];
   var matchScope = str.replace(/\n/g,'').match(/scope:\s*?{\s*.*['"]\s*}/);
-  matchScope[0].match(/\w+: ?'[a-zA-Z=@]+'/g).map(function(str){
+  matchScope[0].match(/\w+\s*: ?['"][a-zA-Z=@]+['"]/g).map(function(str){
     var temp = str.match(/(\w+): ?['"](.+)['"]/);
     pairs.push({key:temp[1],value:temp[2]});
   });
@@ -443,6 +440,7 @@ ddLib.formatResults = function(failedElements) {
           break;
         case 'ngevent':
           message = ddLib.buildNgEvent(info, id, type);
+          break;
         case 'mutuallyexclusive':
           message = ddLib.buildMutuallyExclusive(info, id, type);
           break;

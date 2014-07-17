@@ -1,3 +1,9 @@
+/* global describe */
+/* global it */
+/* global inject */
+/* global module */
+/* global require */
+/* global expect */
 'use strict';
 describe('dd-app', function() {
 
@@ -29,6 +35,70 @@ describe('dd-app', function() {
     });
   });
 
+  describe('getFailedAttributes()', function() {
+    var options = {
+      directiveTypes:['angular-default-directives','html-directives'],
+      tolerance: 4
+    };
+    it('should not find anything if nothing is wrong', function() {
+      var elementToTest = [{nodeName:'id'},{nodeName:'ng-href'},{nodeName:'ng-show'}];
+      var results = ddLib.getFailedAttributes(elementToTest,options);
+      expect(results.length).toBe(0);
+    });
+    it('should find misspelled attributes in element', function() {
+      var elementToTest = [{nodeName:'ng-ap'},{nodeName:'ng-hef'}];
+      var results = ddLib.getFailedAttributes(elementToTest,options);
+      expect(results[0].error).toBe('ng-ap');
+      expect(results[1].error).toBe('ng-hef');
+    });
+
+    it('should identify mutually exclusive pairs of attributes', function() {
+      var elementToTest = [{nodeName:'ng-show'},{nodeName:'ng-hide'}];
+      var results = ddLib.getFailedAttributes(elementToTest,options);
+      expect(results[0].typeError).toBe('mutuallyexclusive');
+
+      elementToTest = [{nodeName:'ng-show'},{nodeName:'ng-click'}];
+      results = ddLib.getFailedAttributes(elementToTest,options);
+      expect(results.length).toBe(0);
+    });
+
+    it('should identify html event attributes', function() {
+       var elementToTest = [{nodeName:'onclick'}];
+       var results = ddLib.getFailedAttributes(elementToTest,options);
+       expect(results[0].typeError).toBe('ngevent');
+    });
+  });
+
+  describe('attributeExsistsInTypes', function() {
+    var options = {
+      directiveTypes:['angular-default-directives','html-directives','angular-custom-directives'],
+      tolerance: 4
+    };
+    it('should identify attributes/directives that do not exsist', function(){
+      var attrs = ['thisCouldntEvenBeReal','ng-clic',''];
+
+      var result = ddLib.attributeExsistsInTypes(attrs[0],options);
+      expect(result.typeError).toBe('nonexsisting');
+      result = ddLib.attributeExsistsInTypes(attrs[1],options);
+      expect(result.typeError).toBe('nonexsisting');
+      result = ddLib.attributeExsistsInTypes(attrs[2],options);
+      expect(result.typeError).toBe('nonexsisting');
+    });
+    it('should identify if attribute directives are used incorrectly', function(){
+      ddLib.data.directiveTypes['angular-default-directives'].directives.fake = 'E';
+      ddLib.data.directiveTypes['angular-default-directives'].directives.fake2 = 'C';
+      var result = ddLib.attributeExsistsInTypes('fake',options);
+      expect(result.typeError).toBe('wronguse');
+      var result = ddLib.attributeExsistsInTypes('fake2',options);
+      expect(result.wrongUse).toBe('class');
+    });
+    it('should identify if element directives are used incorrectly', function(){
+      ddLib.data.directiveTypes['angular-custom-directives'].directives.fake = 'A';
+      var result = ddLib.attributeExsistsInTypes('*fake',options);
+      expect(result.wrongUse).toBe('attribute');
+    });
+  });
+
   describe('getSuggestions()', function() {
     it('should return an array of objects with the proper match for each error', function() {
       var failedAttr = 'ng-ap';
@@ -38,37 +108,6 @@ describe('dd-app', function() {
       };
       var result = ddLib.getSuggestions(failedAttr, options);
       expect(result.match).toBe('ng-app');
-    });
-  });
-
-  describe('formatResults()', function() {
-    it('should display the correct message with respect to the correction found', function() {
-      var failedElements = [{
-        domElement:{id:'',nodeName:'HTML'},
-        data: [{
-          directiveType: 'angular-default-directives',
-          error: 'ng-ap',
-          match: 'ng-app',
-          typeError: 'nonexsisting'
-        }]
-      }];
-      var messages = ddLib.formatResults(failedElements);
-      var display = 'There was an AngularJS error in HTML element. Found incorrect '+
-        'attribute "ng-ap" try "ng-app".';
-      expect(messages[0]).toBe(display);
-    });
-  });
-
-  describe('getFailedAttributes()', function() {
-    it('should find failed attributes in element', function() {
-      var options = {
-        directiveTypes:['angular-default-directives'],
-        tolerance: 4
-      };
-      var elementToTest = [{nodeName:'ng-ap'},{nodeName:'ng-hef'}];
-      var results = ddLib.getFailedAttributes(elementToTest,options);
-      expect(results[0].error).toBe('ng-ap');
-      expect(results[1].error).toBe('ng-hef');
     });
   });
 
@@ -92,7 +131,7 @@ describe('dd-app', function() {
     });
   });
 
-  describe('normalizeAttribute', function() {
+  describe('normalizeAttribute()', function() {
     it('should normalize attribute by stripping optional parameters', function() {
       var testAttrs = ['data:ng-click','x:ng:src','ng:href'];
       testAttrs = testAttrs.map(function(x){return ddLib.normalizeAttribute(x);});
@@ -101,11 +140,88 @@ describe('dd-app', function() {
       expect(testAttrs[2]).toBe('ng-href');
     });
   });
-  /* Upper and lower bounds of LD
-      It is always at least the difference of the sizes of the two strings.
-      It is at most the length of the longer string.
-      It is zero if and only if the strings are equal.
-  */
+
+  describe('findMissingAttrs()', function(){
+    it('should identify that there are no missing required attributes', function() {
+      var attrs = [{nodeName:'ng-click'},{nodeName: 'a'}];
+      ddLib.data.directiveTypes['angular-custom-directives'].directives['test'] =
+        {
+          require: [{directiveName:'a', restrict:'A'}]
+        };
+      var result = ddLib.findMissingAttrs('test',attrs);
+      expect(result).toEqual([]);
+    });
+    it('should identify missing required attributes', function(){
+      var attrs = [{nodeName:'ng-click'},{nodeName: 'id'}];
+      ddLib.data.directiveTypes['angular-custom-directives'].directives['test'] =
+        {
+          require: [{directiveName:'a', restrict:'A'}]
+        };
+      var result = ddLib.findMissingAttrs('test',attrs);
+      expect(result).toEqual(['a']);
+    });
+  });
+
+  describe('getKeysAndValues()',function() {
+    it('should get all directives created by isolated scope in directive factory', function() {
+      var factoryString = 'scope:{url:"="}';
+      var result = ddLib.getKeysAndValues(factoryString);
+      expect(result[0].directiveName).toBe('url');
+
+      factoryString = 'scope:{url:"=notUrl"}';
+      result = ddLib.getKeysAndValues(factoryString);
+      expect(result[0].directiveName).toBe('notUrl');
+
+      factoryString = 'scope:{url:"=", id:"@"}';
+      result = ddLib.getKeysAndValues(factoryString);
+      expect(result[1].directiveName).toBe('id');
+
+      factoryString = 'scope:{url:"=a", id:"@b"}';
+      result = ddLib.getKeysAndValues(factoryString);
+      expect(result[0].directiveName).toBe('a');
+      expect(result[1].directiveName).toBe('b');
+    });
+  });
+
+  describe('formatResults()', function() {
+    it('should display the correct message with respect to the correction found', function() {
+      var failedElements = [{
+        domElement:{id:'',nodeName:'HTML'},
+        data: [{
+          directiveType: 'angular-default-directives',
+          error: 'ng-ap',
+          match: 'ng-app',
+          typeError: 'nonexsisting'
+        }]
+      }];
+      var messages = ddLib.formatResults(failedElements);
+      var display = 'There was an AngularJS error in HTML element. Found incorrect '+
+        'attribute "ng-ap" try "ng-app".';
+      expect(messages[0]).toBe(display);
+    });
+  });
+
+  describe('setCustomDirectives()', function() {
+    it('should set directives passed as custom directives', function() {
+      var customDirs = [{directiveName:'testDir'}];
+      ddLib.setCustomDirectives(customDirs);
+      var result = ddLib.data.directiveTypes['angular-custom-directives'].directives['test-dir'];
+      expect(result).toEqual({directiveName:'testDir'});
+    });
+  });
+
+  describe('areSimilarEnough()', function() {
+    var sim = ['hello','hellp'];
+    var dif = ['asdfg','asqwre'];
+    var far = ['hotdog','hamburgers'];
+    var res1 = ddLib.areSimilarEnough(sim[0],sim[1]);
+    var res2 = ddLib.areSimilarEnough(dif[0],dif[1]);
+    var res3 = ddLib.areSimilarEnough(far[0],far[1]);
+    expect(res1).toBe(true);
+    expect(res2).toBe(false);
+    expect(res3).toBe(false);
+  });
+
   describe('levenshteinDistance()', function() {
     it('should only accept strings to be passed',function() {
       expect(function() {
