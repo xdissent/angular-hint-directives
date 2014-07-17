@@ -255,7 +255,7 @@ ddLib.getFailedAttributes = function(attributes, options) {
   for(var i = 0; i < attributes.length; i++) {
     var attr = ddLib.normalizeAttribute(attributes[i].nodeName);
     var dirVal = ddLib.data.directiveTypes['html-directives'].directives[attr] || '';
-    if(dirVal.has('!')) {
+    if(dirVal.indexOf('!') > -1) {
       failedAttrs.push({
         error: attr,
         directiveType: 'html-directives',
@@ -306,10 +306,10 @@ ddLib.attributeExsistsInTypes = function(attribute, options) {
       directive = ddLib.data.directiveTypes[dirType].directives[attribute] || '';
       restrictProp = directive.restrict || directive;
       if(restrictProp) {
-        if(restrictProp.has('E') && !restrictProp.has('A')) {
+        if(restrictProp.indexOf('E') > -1 && restrictProp.indexOf('A') < 0) {
           wrongUse = 'element';
         }
-        if(restrictProp.has('C') && !restrictProp.has('A')) {
+        if(restrictProp.indexOf('C') > -1 && restrictProp.indexOf('A') < 0) {
           wrongUse = (wrongUse) ? 'element and class' : 'class';
         }
         anyTrue = anyTrue || true;
@@ -319,7 +319,7 @@ ddLib.attributeExsistsInTypes = function(attribute, options) {
       directive = ddLib.data.directiveTypes[dirType].directives[attribute.substring(1)] || '';
       restrictProp = directive.restrict || directive;
       anyTrue = anyTrue || true;
-      if(restrictProp && restrictProp.has('A') && !restrictProp.has('E')) {
+      if(restrictProp && restrictProp.indexOf('A') > -1 && restrictProp.indexOf('E') < 0) {
         wrongUse = 'attribute';
       }
     }
@@ -463,7 +463,7 @@ ddLib.buildNonExsisting = function(info, id, type) {
 ddLib.buildWrongUse = function(info, id, type) {
   var message = ddLib.data.directiveTypes[info.directiveType].message+type+' element'+id+'. ';
   var error = (info.error.charAt(0) === '*') ? info.error.substring(1): info.error;
-  var aecmType = (info.wrongUse.has('attribute'))? 'Element' : 'Attribute';
+  var aecmType = (info.wrongUse.indexOf('attribute') > -1)? 'Element' : 'Attribute';
   message += aecmType+' name "'+error+'" is reserved for '+info.wrongUse+' names only.';
   return message;
 };
@@ -626,10 +626,6 @@ ddLib.hasMutExclPair = function(attr, attributes) {
     }
   });
   return found;
-};
-
-String.prototype.has = function(str) {
-  return this.indexOf(str) > -1;
 };
 
 }((typeof module !== 'undefined' && module && module.exports) ?
