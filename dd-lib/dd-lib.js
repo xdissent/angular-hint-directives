@@ -136,7 +136,7 @@ ddLib.checkPrelimErrors = require('../lib/checkPrelimErrors');
 /**
  * @param str: string to convert formatting from camelCase to lowercase with dash after ng.
  **/
-ddLib.camelToDashes = require('../lib/camelToDashes');
+ddLib.camelize = require('camelize');
 
 ddLib.hasNameSpace = require('../lib/hasNameSpace');
 

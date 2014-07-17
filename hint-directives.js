@@ -27,7 +27,7 @@ angular.module('ngLocale').config(function($provide) {
       var originalProviderDirective = provider.directive;
       provider.directive = function(dirsObj) {
         for(var prop in dirsObj){
-          var propDashed = ddLib.camelToDashes(prop);
+          var propDashed = ddLib.camelize(prop);
           if(isNaN(+propDashed) &&
             !ddLib.data.directiveTypes['angular-default-directives'].directives[propDashed] &&
             !ddLib.data.directiveTypes['html-directives'].directives[propDashed]) {
