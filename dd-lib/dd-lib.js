@@ -116,6 +116,7 @@ ddLib.data = {
         'ng-cut': 'A',
         'ng-dblclick': 'A',
         'ng-disabled': 'A',
+        'ng-dirty': 'A',
         'ng-focus': 'A',
         'ng-form': 'A',
         'ng-hide': 'A',
@@ -126,6 +127,7 @@ ddLib.data = {
         'ng-if': 'A',
         'ng-include': 'A',
         'ng-init': 'A',
+        'ng-invalid': 'A',
         'ng-keydown': 'A',
         'ng-keypress': 'A',
         'ng-keyup': 'A',
@@ -133,7 +135,7 @@ ddLib.data = {
         'ng-maxlength': 'A',
         'ng-minlength': 'A',
         'ng-model': 'A',
-        'ng-modeloptions': 'A',
+        'ng-model-options': 'A',
         'ng-mousedown': 'A',
         'ng-mouseenter': 'A',
         'ng-mouseleave': 'A',
@@ -146,6 +148,7 @@ ddLib.data = {
         'ng-paste': 'A',
         'ng-pattern': 'A',
         'ng-pluralize': 'A',
+        'ng-pristine': 'A',
         'ng-readonly': 'A',
         'ng-repeat': 'A',
         'ng-required': 'A',
@@ -161,6 +164,7 @@ ddLib.data = {
         'ng-trim': 'A',
         'ng-false-value': 'A',
         'ng-value': 'A',
+        'ng-valid': 'A',
         'ng-view': 'A',
         'required': 'A',
         'when': 'A'
@@ -247,7 +251,7 @@ ddLib.getFailedAttributesOfElement = function(options, element) {
  *@return [] of failedAttributes with their respective suggestions and directiveTypes
  **/
 ddLib.getFailedAttributes = function(attributes, options) {
-  var failedAttrs = [];
+  var failedAttrs = [], mutExPairFound = false;
   for(var i = 0; i < attributes.length; i++) {
     var attr = ddLib.normalizeAttribute(attributes[i].nodeName);
     var dirVal = ddLib.data.directiveTypes['html-directives'].directives[attr] || '';
@@ -257,6 +261,18 @@ ddLib.getFailedAttributes = function(attributes, options) {
         directiveType: 'html-directives',
         typeError: 'ngevent'
       });
+      continue;
+    }
+    if(attr == 'ng-show'){
+      console.log(attr);
+    }
+    if(!mutExPairFound && ddLib.isMutExclDir(attr) && ddLib.hasMutExclPair(attr,attributes)) {
+      failedAttrs.push({
+        error: attr,
+        directiveType: 'angular-default-directives',
+        typeError: 'mutuallyexclusive'
+      });
+      mutExPairFound = true;
       continue;
     }
     var result = ddLib.attributeExsistsInTypes(attr,options);
@@ -427,6 +443,8 @@ ddLib.formatResults = function(failedElements) {
           break;
         case 'ngevent':
           message = ddLib.buildNgEvent(info, id, type);
+        case 'mutuallyexclusive':
+          message = ddLib.buildMutuallyExclusive(info, id, type);
           break;
       }
       hintLog.createErrorMessage(message, ddLib.errorNumber = ++ddLib.errorNumber, obj.domElement);
@@ -467,6 +485,13 @@ ddLib.buildMissingRequired = function(info, id, type) {
 ddLib.buildNgEvent = function(info, id, type) {
   var ngDir = 'ng-'+info.error.substring(2);
   var message = 'Use Angular version of "'+info.error+'" in '+type+' element'+id+'. Try: "'+ngDir+'"';
+  return message;
+};
+
+ddLib.buildMutuallyExclusive = function(info, id, type) {
+  var pair = ddLib.isMutExclDir(info.error);
+  var message = 'Angular attributes "'+info.error+'" and "'+pair+'" in '+type+ ' element'+id+
+    ' should not be attributes together on the same HTML element';
   return message;
 };
 
@@ -585,8 +610,28 @@ ddLib.hasReplaceOption = function(facStr) {
   return facStr.match(/replace\s*:/);
 };
 
+ddLib.isMutExclDir = function (dirName) {
+  var exclusiveDirHash = {
+    'ng-show' : 'ng-hide',
+    'ng-hide' : 'ng-show',
+    'ng-switch-when' : 'ng-switch-default',
+    'ng-switch-default' : 'ng-switch-when',
+  };
+  return exclusiveDirHash[dirName];
+};
+
+ddLib.hasMutExclPair = function(attr, attributes) {
+  var found = false, pair = ddLib.isMutExclDir(attr);
+  attributes.map(function(otherAttr){
+    if(otherAttr.nodeName == pair) {
+      found = true;
+    }
+  });
+  return found;
+};
+
 String.prototype.has = function(str) {
-  return this.indexOf(str) >= 0;
+  return this.indexOf(str) > -1;
 };
 
 }((typeof module !== 'undefined' && module && module.exports) ?
