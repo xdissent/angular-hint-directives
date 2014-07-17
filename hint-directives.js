@@ -3,7 +3,6 @@
 var ddLib = require('./dd-lib/dd-lib');
 var customDirectives = [];
 
-
 angular.module('ngHintDirectives', ['ngLocale'])
   .config(['$provide', function($provide) {
     $provide.decorator('$compile', ['$delegate', function($delegate) {
