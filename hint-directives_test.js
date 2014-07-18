@@ -73,6 +73,18 @@ describe('ddLib and Angular Integration Test', function() {
       expect(customDirectives['test-directive'].restrict).toBe('ACME');
     }));
 
+    it('should handle restrict regexp correctly', inject(function ($compile) {
+      angular.module('testModule',[]).directive('testDirective', function() {
+        return {
+          restrict  :  "ACME"
+        };
+      });
+      $compile(angular.element('<div></div>'));
+      var customDirectives =
+        ddLib.data.directiveTypes['angular-custom-directives'].directives;
+      expect(customDirectives['test-directive'].restrict).toBe('ACME');
+    }));
+
     it('should allow custom directives without "restrict"', inject(function ($compile) {
       angular.module('testModule',[]).directive('testDirective', function() {
         return {};

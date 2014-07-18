@@ -1,6 +1,7 @@
 'use strict';
 
 var ddLib = require('./dd-lib/dd-lib');
+var RESTRICT_REGEXP = /restrict\s*:\s*['"](.+?)['"]/;
 var customDirectives = [];
 
 angular.module('ngHintDirectives', ['ngLocale'])
@@ -31,7 +32,7 @@ angular.module('ngLocale').config(function($provide) {
           if(isNaN(+propDashed) &&
             !ddLib.data.directiveTypes['angular-default-directives'].directives[propDashed] &&
             !ddLib.data.directiveTypes['html-directives'].directives[propDashed]) {
-            var matchRestrict = dirsObj[prop].toString().match(/restrict:\s*'(.+?)'/);
+            var matchRestrict = dirsObj[prop].toString().match(RESTRICT_REGEXP);
             ddLib.data.directiveTypes['angular-default-directives']
               .directives[propDashed] = (matchRestrict && matchRestrict[1]) || 'A';
           }
@@ -56,7 +57,7 @@ angular.module = function() {
     var pairs = ddLib.getKeysAndValues(factoryStr);
     pairs.map(function(pair){customDirectives.push(pair);});
 
-    var matchRestrict = factoryStr.match(/restrict:\s*'(.+?)'/);
+    var matchRestrict = factoryStr.match(RESTRICT_REGEXP);
     var restrict = (matchRestrict && matchRestrict[1]) || 'A';
     var directive = {directiveName: directiveName, restrict: restrict,  require:pairs};
     customDirectives.push(directive);
