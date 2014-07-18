@@ -1,24 +1,37 @@
 'use strict';
 
-var ddLib = require('./dd-lib/dd-lib');
+//var ddLib = require('./dd-lib/dd-lib');
 var customDirectives = [];
+
+var hintLog = require('angular-hint-log');
+var camelize = require('camelize');
+
+var search = require('./lib/search');
+var ddLibData = require('./lib/ddLib-data');
+var checkPrelimErrors = require('./lib/checkPrelimErrors');
+var getKeysAndValues = require('./lib/getKeysAndValues');
+
+var defaultDirectives = ddLibData.directiveTypes['angular-default-directives'].directives;
+var htmlDirectives = ddLibData.directiveTypes['html-directives'].directives;
 
 angular.module('ngHintDirectives', ['ngLocale'])
   .config(['$provide', function($provide) {
     $provide.decorator('$compile', ['$delegate', function($delegate) {
       return function(elem) {
-        var messages=[];
-        for(var i = 0; i < elem.length; i+=2){
-          if(elem[i].getElementsByTagName){
+        var messages = [];
+        for(var i = 0; i < elem.length; i+=2) {
+          if(elem[i].getElementsByTagName) {
             var toSend = Array.prototype.slice.call(elem[i].getElementsByTagName('*'));
-            var result = ddLib.beginSearch(toSend,customDirectives);
+            var result = search(toSend, customDirectives);
             messages = messages.concat(result);
           }
         }
-        return $delegate.apply(this,arguments);
+        return $delegate.apply(this, arguments);
       };
     }]);
   }]);
+
+
 angular.module('ngLocale').config(function($provide) {
   var originalProvider = $provide.provider;
   $provide.provider = function(token, provider) {
@@ -27,13 +40,15 @@ angular.module('ngLocale').config(function($provide) {
       var originalProviderDirective = provider.directive;
       provider.directive = function(dirsObj) {
         for(var prop in dirsObj){
-          var propDashed = ddLib.camelize(prop);
+          var propDashed = camelize(prop);
           if(isNaN(+propDashed) &&
-            !ddLib.data.directiveTypes['angular-default-directives'].directives[propDashed] &&
-            !ddLib.data.directiveTypes['html-directives'].directives[propDashed]) {
+              !defaultDirectives[propDashed] &&
+              !htmlDirectives[propDashed]) {
+
             var matchRestrict = dirsObj[prop].toString().match(/restrict:\s*'(.+?)'/) || 'ACME';
-            ddLib.data.directiveTypes['angular-default-directives']
-              .directives[propDashed] = matchRestrict[1];
+            ddLibData.directiveTypes['angular-default-directives']
+                .directives[propDashed] = matchRestrict[1];
+
           }
         }
         return originalProviderDirective.apply(this, arguments);
@@ -42,6 +57,7 @@ angular.module('ngLocale').config(function($provide) {
     return provider;
   };
 });
+
 var originalAngularModule = angular.module;
 angular.module = function() {
   var module = originalAngularModule.apply(this, arguments);
@@ -51,9 +67,9 @@ angular.module = function() {
         directiveFactory[directiveFactory.length - 1];
     var factoryStr = originalDirectiveFactory.toString();
 
-    ddLib.checkPrelimErrors(directiveName,factoryStr);
+    checkPrelimErrors(directiveName,factoryStr);
 
-    var pairs = ddLib.getKeysAndValues(factoryStr);
+    var pairs = getKeysAndValues(factoryStr);
     pairs.map(function(pair){customDirectives.push(pair);});
 
     var matchRestrict = factoryStr.match(/restrict:\s*'(.+?)'/);
