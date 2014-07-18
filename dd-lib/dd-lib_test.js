@@ -174,14 +174,17 @@ describe('dd-app', function() {
       result = ddLib.getKeysAndValues(factoryString);
       expect(result[0].directiveName).toBe('notUrl');
 
-      factoryString = 'scope:{url:"=", id:"@"}';
+      factoryString = 'scope:{url:"=", id:"@", notify:"&"}';
       result = ddLib.getKeysAndValues(factoryString);
+      expect(result[0].directiveName).toBe('url');
       expect(result[1].directiveName).toBe('id');
+      expect(result[2].directiveName).toBe('notify');
 
-      factoryString = 'scope:{url:"=a", id:"@b"}';
+      factoryString = 'scope:{url:"=a", id:"@b", notify:"&c"}';
       result = ddLib.getKeysAndValues(factoryString);
       expect(result[0].directiveName).toBe('a');
       expect(result[1].directiveName).toBe('b');
+      expect(result[2].directiveName).toBe('c');
     });
     it('should return empty array in case the are no pairs', function () {
       factoryString = 'scope: {}';
