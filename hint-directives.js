@@ -63,11 +63,6 @@ angular.module = function() {
     var directive = {directiveName: directiveName, restrict: restrict,  require:pairs};
     customDirectives.push(directive);
 
-    arguments[1][0] = function () {
-      var ddo = originalDirectiveFactory.apply(this, arguments);
-      directive.restrict = ddo.restrict || 'A';
-      return ddo;
-    };
     return originalDirective.apply(this, arguments);
   };
   return module;
