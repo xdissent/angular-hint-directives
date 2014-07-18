@@ -163,9 +163,11 @@ describe('dd-app', function() {
   });
 
   describe('getKeysAndValues()',function() {
+    var factoryString, result;
+
     it('should get all directives created by isolated scope in directive factory', function() {
-      var factoryString = 'scope:{url:"="}';
-      var result = ddLib.getKeysAndValues(factoryString);
+      factoryString = 'scope:{url:"="}';
+      result = ddLib.getKeysAndValues(factoryString);
       expect(result[0].directiveName).toBe('url');
 
       factoryString = 'scope:{url:"=notUrl"}';
@@ -180,6 +182,19 @@ describe('dd-app', function() {
       result = ddLib.getKeysAndValues(factoryString);
       expect(result[0].directiveName).toBe('a');
       expect(result[1].directiveName).toBe('b');
+    });
+    it('should return empty array in case the are no pairs', function () {
+      factoryString = 'scope: {}';
+      result = ddLib.getKeysAndValues(factoryString);
+      expect(result).toEqual([]);
+
+      factoryString = 'scope: true';
+      result = ddLib.getKeysAndValues(factoryString);
+      expect(result).toEqual([]);
+
+      factoryString = '';
+      result = ddLib.getKeysAndValues(factoryString);
+      expect(result).toEqual([]);
     });
   });
 
