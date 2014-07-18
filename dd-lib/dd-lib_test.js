@@ -195,6 +195,16 @@ describe('dd-app', function() {
       factoryString = '';
       result = ddLib.getKeysAndValues(factoryString);
       expect(result).toEqual([]);
+
+      factoryString = 'scope: {}, other: {url: "="}';
+      result = ddLib.getKeysAndValues(factoryString);
+      expect(result).toEqual([]);
+    });
+    it('should handle white spaces correctly in regexp', function () {
+      factoryString = 'scope  :  {  url  :  "="  }';
+      result = ddLib.getKeysAndValues(factoryString);
+      expect(result[0].directiveName).toBe('url');
+
     });
   });
 
