@@ -27,13 +27,13 @@ angular.module('ngLocale').config(function($provide) {
       var originalProviderDirective = provider.directive;
       provider.directive = function(dirsObj) {
         for(var prop in dirsObj){
-          var propDashed = ddLib.camelize(prop);
+          var propDashed = ddLib.dasherize(prop);
           if(isNaN(+propDashed) &&
             !ddLib.data.directiveTypes['angular-default-directives'].directives[propDashed] &&
             !ddLib.data.directiveTypes['html-directives'].directives[propDashed]) {
-            var matchRestrict = dirsObj[prop].toString().match(/restrict:\s*'(.+?)'/) || 'ACME';
+            var matchRestrict = dirsObj[prop].toString().match(/restrict:\s*'(.+?)'/);
             ddLib.data.directiveTypes['angular-default-directives']
-              .directives[propDashed] = matchRestrict[1];
+              .directives[propDashed] = (matchRestrict && matchRestrict[1]) || 'A';
           }
         }
         return originalProviderDirective.apply(this, arguments);
@@ -57,7 +57,7 @@ angular.module = function() {
     pairs.map(function(pair){customDirectives.push(pair);});
 
     var matchRestrict = factoryStr.match(/restrict:\s*'(.+?)'/);
-    var restrict = matchRestrict[1] || 'ACME';
+    var restrict = (matchRestrict && matchRestrict[1]) || 'A';
     var directive = {directiveName: directiveName, restrict: restrict,  require:pairs};
     customDirectives.push(directive);
 
