@@ -67,7 +67,7 @@ describe('ddLib and Angular Integration Test', function() {
           restrict: 'ACME'
         };
       });
-      $compile(angular.element('<div></div>'));
+      $compile('<div></div>');
       var customDirectives =
         ddLib.data.directiveTypes['angular-custom-directives'].directives;
       expect(customDirectives['test-directive'].restrict).toBe('ACME');
@@ -79,7 +79,7 @@ describe('ddLib and Angular Integration Test', function() {
           restrict  :  "ACME"
         };
       });
-      $compile(angular.element('<div></div>'));
+      $compile('<div></div>');
       var customDirectives =
         ddLib.data.directiveTypes['angular-custom-directives'].directives;
       expect(customDirectives['test-directive'].restrict).toBe('ACME');
@@ -89,7 +89,7 @@ describe('ddLib and Angular Integration Test', function() {
       angular.module('testModule',[]).directive('testDirective', function() {
         return {};
       });
-      $compile(angular.element('<div></div>'));
+      $compile('<div></div>');
       var customDirectives =
         ddLib.data.directiveTypes['angular-custom-directives'].directives;
       expect(customDirectives['test-directive'].restrict).toBe('A');

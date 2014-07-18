@@ -9,6 +9,7 @@ angular.module('ngHintDirectives', ['ngLocale'])
     $provide.decorator('$compile', ['$delegate', function($delegate) {
       return function(elem) {
         var messages=[];
+        elem = angular.element(elem);
         for(var i = 0; i < elem.length; i+=2){
           if(elem[i].getElementsByTagName){
             var toSend = Array.prototype.slice.call(elem[i].getElementsByTagName('*'));
