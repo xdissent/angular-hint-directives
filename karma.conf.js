@@ -18,8 +18,8 @@ module.exports = function(config) {
       'bower_components/angular/angular.js',
       'bower_components/angular-mocks/angular-mocks.js',
       'hint-directives.js',
-      'dd-lib/dd-lib_test.js',
-      'hint-directives_test.js',
+      'test/*_test.js',
+      'hint-directives_test.js'
     ],
 
 
@@ -31,7 +31,7 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       'hint-directives.js': ['browserify'],
-      'dd-lib/dd-lib_test.js': ['browserify']
+      'test/*_test.js' : ['browserify']
     },
 
 

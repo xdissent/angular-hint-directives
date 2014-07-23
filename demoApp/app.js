@@ -1,3 +1,4 @@
+'use strict';
 angular.module('demoApp',
   ['ngHintDirectives','breadcrumbs','dataFetch', 'haAnimations', 'haPrFlags', 'haQuestions', 'ngAnimate',
   'haShareResources','haSupportComponents', 'haTriage', 'ngRoute', 'qaStore','ngLocale'])
@@ -34,4 +35,4 @@ angular.module('demoApp',
           templateUrl: 'questions/questions.html'
         }).
         otherwise({redirectTo: '/questions/intro'});
-}])
+}]);
