@@ -19,7 +19,6 @@ module.exports = function(config) {
       'bower_components/angular-mocks/angular-mocks.js',
       'hint-directives.js',
       'test/*_test.js',
-      'hint-directives_test.js',
     ],
 
 
