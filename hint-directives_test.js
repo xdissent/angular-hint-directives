@@ -1,5 +1,6 @@
 'use strict';
 
+var hintLog = angular.hint;
 describe('ddLib and Angular Integration Test', function() {
 
   beforeEach(module('ngHintDirectives'));
@@ -10,44 +11,22 @@ describe('ddLib and Angular Integration Test', function() {
     beforeEach(inject(function(_$rootScope_, _$compile_) {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
-
-      spyOn(console, 'log').andCallThrough();
-      spyOn(console, 'warn').andCallThrough();
+      hintLog.onMessage = jasmine.createSpy('onMessage');
     }));
-
-    it('should track that ddLib.beginSearch was called', function() {
-      var spy = spyOn(ddLib, 'beginSearch').andCallThrough();
-      var html = '<div id="topTest"><div ng-click="">Testing</div><p ng-src="">Testing</p></div>';
-      var element = angular.element(html);
-      $compile(element)($rootScope);
-      $rootScope.$apply();
-      expect(spy).toHaveBeenCalled();
-    });
-
     it('should have no return no errors if there are none', function() {
-      spyOn(ddLib, 'formatResults').andCallFake(
-        function(data) {
-          console.log(data.length);
-          return [{messsage:'',domElement:''}];
-        });
       var html = '<div id="topTest"><div ng-click="">Testing</div><p ng-src="">Testing</p></div>';
       var element = angular.element(html);
       $compile(element)($rootScope);
       $rootScope.$apply();
-      expect(console.log).toHaveBeenCalledWith(0);
+      expect(hintLog.onMessage).not.toHaveBeenCalled();
     });
 
     it('should return the console.log the correct number of errors', function() {
-      spyOn(ddLib, 'formatResults').andCallFake(
-        function(data) {
-          console.log(data.length);
-          return [{messsage:'',domElement:''}];
-        });
       var html = '<div id="topTest"><div ng-cick="">Testing</div><p ng-src="">Testing</p></div>';
       var element = angular.element(html);
       $compile(element)($rootScope);
       $rootScope.$apply();
-      expect(console.log).toHaveBeenCalledWith(1);
+      expect(hintLog.onMessage).toHaveBeenCalledWith('There was an AngularJS error in DIV element. Found incorrect attribute "ng-cick" try "ng-click".');
     });
 
     it('should ignore comment nodes', function() {
@@ -76,24 +55,14 @@ describe('ddLib and Angular Integration Test', function() {
     beforeEach(inject(function(_$rootScope_, _$compile_) {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
-      spyOn(ddLib, 'testMessage').andCallThrough();
+      hintLog.onMessage = jasmine.createSpy('onMessage');
     }));
-
-    it('should add custom directives to ddLib.directiveTypes', function() {
-      var html = '<div id="outer"><test-directive info="info"></test-directive></div>';
-      var element = angular.element(html);
-      $compile(element)($rootScope);
-      $rootScope.$apply();
-      var customDirectives =
-        ddLib.data.directiveTypes['angular-custom-directives'].directives;
-      expect(customDirectives['test-directive']).toBeTruthy();
-    });
     it('should log error if custom directive is misspelled', function() {
       var html2 = '<div id="outer2"><div></div><p id="toFailTest" tst-dirctive=""></p></div>';
       var element2 = angular.element(html2);
       $compile(element2)($rootScope);
       $rootScope.$apply();
-      expect(ddLib.testMessage).toHaveBeenCalledWith('There was an AngularJS error in P element with '+
+      expect(hintLog.onMessage).toHaveBeenCalledWith('There was an AngularJS error in P element with '+
         'id: #toFailTest. Found incorrect attribute "tst-dirctive" try "test-directive".');
     });
     it('should log error if custom directive is used incorrectly based on restrict', function() {
@@ -101,7 +70,7 @@ describe('ddLib and Angular Integration Test', function() {
       var element3 = angular.element(html3);
       $compile(element3)($rootScope);
       $rootScope.$apply();
-      expect(ddLib.testMessage).toHaveBeenCalledWith('There was an AngularJS error in P element with '+
+      expect(hintLog.onMessage).toHaveBeenCalledWith('There was an AngularJS error in P element with '+
         'id: #toFailTest3. Attribute name "test-directive" is reserved for element and class'+
         ' names only.');
     });
