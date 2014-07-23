@@ -27,7 +27,7 @@
   "dependencies": {
     "angular-hint-log": "git://github.com/angular/angular-hint-log",
     "browserify": "^4.2.0",
-    "camelize": "^1.0.0",
+    "dasherize": "^1.0.0",
     "gulp": "^3.8.6",
     "karma-bro": "^0.6.0",
     "karma-coverage": "^0.2.4",

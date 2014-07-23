@@ -163,23 +163,51 @@ describe('dd-app', function() {
   });
 
   describe('getKeysAndValues()',function() {
+    var factoryString, result;
+
     it('should get all directives created by isolated scope in directive factory', function() {
-      var factoryString = 'scope:{url:"="}';
-      var result = ddLib.getKeysAndValues(factoryString);
+      factoryString = 'scope:{url:"="}';
+      result = ddLib.getKeysAndValues(factoryString);
       expect(result[0].directiveName).toBe('url');
 
       factoryString = 'scope:{url:"=notUrl"}';
       result = ddLib.getKeysAndValues(factoryString);
       expect(result[0].directiveName).toBe('notUrl');
 
-      factoryString = 'scope:{url:"=", id:"@"}';
+      factoryString = 'scope:{url:"=", id:"@", notify:"&"}';
       result = ddLib.getKeysAndValues(factoryString);
+      expect(result[0].directiveName).toBe('url');
       expect(result[1].directiveName).toBe('id');
+      expect(result[2].directiveName).toBe('notify');
 
-      factoryString = 'scope:{url:"=a", id:"@b"}';
+      factoryString = 'scope:{url:"=a", id:"@b", notify:"&c"}';
       result = ddLib.getKeysAndValues(factoryString);
       expect(result[0].directiveName).toBe('a');
       expect(result[1].directiveName).toBe('b');
+      expect(result[2].directiveName).toBe('c');
+    });
+    it('should return empty array in case the are no pairs', function () {
+      factoryString = 'scope: {}';
+      result = ddLib.getKeysAndValues(factoryString);
+      expect(result).toEqual([]);
+
+      factoryString = 'scope: true';
+      result = ddLib.getKeysAndValues(factoryString);
+      expect(result).toEqual([]);
+
+      factoryString = '';
+      result = ddLib.getKeysAndValues(factoryString);
+      expect(result).toEqual([]);
+
+      factoryString = 'scope: {}, other: {url: "="}';
+      result = ddLib.getKeysAndValues(factoryString);
+      expect(result).toEqual([]);
+    });
+    it('should handle white spaces correctly in regexp', function () {
+      factoryString = 'scope  :  {  url  :  "="  }';
+      result = ddLib.getKeysAndValues(factoryString);
+      expect(result[0].directiveName).toBe('url');
+
     });
   });
 

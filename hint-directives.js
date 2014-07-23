@@ -1,6 +1,7 @@
 'use strict';
 
 var ddLib = require('./dd-lib/dd-lib');
+var RESTRICT_REGEXP = /restrict\s*:\s*['"](.+?)['"]/;
 var customDirectives = [];
 
 angular.module('ngHintDirectives', ['ngLocale'])
@@ -8,6 +9,7 @@ angular.module('ngHintDirectives', ['ngLocale'])
     $provide.decorator('$compile', ['$delegate', function($delegate) {
       return function(elem) {
         var messages=[];
+        elem = angular.element(elem);
         for(var i = 0; i < elem.length; i+=2){
           if(elem[i].getElementsByTagName){
             var toSend = Array.prototype.slice.call(elem[i].getElementsByTagName('*'));
@@ -27,13 +29,13 @@ angular.module('ngLocale').config(function($provide) {
       var originalProviderDirective = provider.directive;
       provider.directive = function(dirsObj) {
         for(var prop in dirsObj){
-          var propDashed = ddLib.camelize(prop);
+          var propDashed = ddLib.dasherize(prop);
           if(isNaN(+propDashed) &&
             !ddLib.data.directiveTypes['angular-default-directives'].directives[propDashed] &&
             !ddLib.data.directiveTypes['html-directives'].directives[propDashed]) {
-            var matchRestrict = dirsObj[prop].toString().match(/restrict:\s*'(.+?)'/) || 'ACME';
+            var matchRestrict = dirsObj[prop].toString().match(RESTRICT_REGEXP);
             ddLib.data.directiveTypes['angular-default-directives']
-              .directives[propDashed] = matchRestrict[1];
+              .directives[propDashed] = (matchRestrict && matchRestrict[1]) || 'A';
           }
         }
         return originalProviderDirective.apply(this, arguments);
@@ -56,16 +58,11 @@ angular.module = function() {
     var pairs = ddLib.getKeysAndValues(factoryStr);
     pairs.map(function(pair){customDirectives.push(pair);});
 
-    var matchRestrict = factoryStr.match(/restrict:\s*'(.+?)'/);
-    var restrict = matchRestrict[1] || 'ACME';
+    var matchRestrict = factoryStr.match(RESTRICT_REGEXP);
+    var restrict = (matchRestrict && matchRestrict[1]) || 'A';
     var directive = {directiveName: directiveName, restrict: restrict,  require:pairs};
     customDirectives.push(directive);
 
-    arguments[1][0] = function () {
-      var ddo = originalDirectiveFactory.apply(this, arguments);
-      directive.restrict = ddo.restrict || 'A';
-      return ddo;
-    };
     return originalDirective.apply(this, arguments);
   };
   return module;
