@@ -1,9 +1,13 @@
 'use strict';
 
 var hintLog = angular.hint;
+
 describe('ddLib and Angular Integration Test', function() {
 
   beforeEach(module('ngHintDirectives'));
+  beforeEach(inject(function(){
+    hintLog.onMessage = jasmine.createSpy('onMessage');
+  }));
 
   describe('Decorator: $rootScope', function() {
     var $rootScope, $compile;
@@ -11,8 +15,8 @@ describe('ddLib and Angular Integration Test', function() {
     beforeEach(inject(function(_$rootScope_, _$compile_) {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
-      hintLog.onMessage = jasmine.createSpy('onMessage');
     }));
+
     it('should have no return no errors if there are none', function() {
       var html = '<div id="topTest"><div ng-click="">Testing</div><p ng-src="">Testing</p></div>';
       var element = angular.element(html);
@@ -42,13 +46,11 @@ describe('ddLib and Angular Integration Test', function() {
     it('should handle restrict regexp correctly', inject(function ($compile) {
       angular.module('testModule',[]).directive('testDirective', function() {
         return {
-          restrict  :  "ACME"
+          restrict  :  "E"
         };
       });
-      $compile('<div></div>');
-      var customDirectives =
-        ddLib.data.directiveTypes['angular-custom-directives'].directives;
-      expect(customDirectives['test-directive'].restrict).toBe('ACME');
+      $compile('<div><div test-directive></div></div>');
+      expect(hintLog.onMessage).toHaveBeenCalledWith('There was an AngularJS error in DIV element. Attribute name "test-directive" is reserved for element names only.');
     }));
 
     it('should allow custom directives without "restrict"', inject(function ($compile) {
@@ -56,37 +58,7 @@ describe('ddLib and Angular Integration Test', function() {
         return {};
       });
       $compile('<div></div>');
-      var customDirectives =
-        ddLib.data.directiveTypes['angular-custom-directives'].directives;
-      expect(customDirectives['test-directive'].restrict).toBe('A');
+      expect(hintLog.onMessage).not.toHaveBeenCalled();
     }));
-
-    it('should add default directives to ddLib.directiveTypes', function () {
-      module(function($compileProvider) {
-        $compileProvider.directive({defaultDirective: function () {
-          return {
-            restrict: 'ACME'
-          };
-        }});
-      });
-      inject(function ($compile) {
-        var defaultDirectives =
-          ddLib.data.directiveTypes['angular-default-directives'].directives;
-        expect(defaultDirectives['default-directive']).toBe('ACME');
-      });
-    });
-
-    it('should allow default directives without "restrict"', function () {
-      module(function($compileProvider) {
-        $compileProvider.directive({defaultAttribDirective: function () {
-          return {};
-        }});
-      });
-      inject(function ($compile) {
-        var defaultDirectives =
-          ddLib.data.directiveTypes['angular-default-directives'].directives;
-        expect(defaultDirectives['default-attrib-directive']).toBe('A');
-      });
-    });
   });
 });

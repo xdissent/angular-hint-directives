@@ -1,14 +1,12 @@
 'use strict';
 
-var ddLib = require('./dd-lib/dd-lib');
 var hintLog = angular.hint = require('angular-hint-log');
+var ddLibData = require('./lib/ddLib-data');
 
 var RESTRICT_REGEXP = /restrict\s*:\s*['"](.+?)['"]/;
 var customDirectives = [];
 var dasherize = require('dasherize');
-var camelize = require('camelize');
 var search = require('./lib/search');
-var ddLibData = require('./lib/ddLib-data');
 var checkPrelimErrors = require('./lib/checkPrelimErrors');
 var getKeysAndValues = require('./lib/getKeysAndValues');
 var defaultDirectives = ddLibData.directiveTypes['angular-default-directives'].directives;
