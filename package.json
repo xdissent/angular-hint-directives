@@ -1,6 +1,6 @@
 {
   "name": "angular-hint-directives",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "tool for identifing mistyped attributes and directives",
   "main": "hint-directives.js",
   "devDependencies": {
