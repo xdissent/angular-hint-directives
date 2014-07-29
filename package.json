@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/angular/angular-hint-directives",
   "dependencies": {
-    "angular-hint-log": "0.0.0",
+    "angular-hint-log": "0.2.0",
     "browserify": "^4.2.0",
     "dasherize": "^1.0.0",
     "gulp": "^3.8.6",
