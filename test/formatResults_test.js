@@ -11,9 +11,10 @@ describe('formatResults()', function() {
         typeError: 'nonexsisting'
       }]
     }];
-    var messages = formatResults(failedElements);
-    var display = 'There was an AngularJS error in HTML element. Found incorrect '+
-      'attribute "ng-ap" try "ng-app".';
-    expect(messages[0]).toBe(display);
+    formatResults(failedElements);
+    var log = angular.hint.flush();
+    var display = [' There was an AngularJS error in HTML element. Found incorrect '+
+      'attribute "ng-ap" try "ng-app".'];
+    expect(Object.keys(log['Directives'])).toEqual(display);
   });
 });

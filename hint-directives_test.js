@@ -30,7 +30,7 @@ describe('ddLib and Angular Integration Test', function() {
       var element = angular.element(html);
       $compile(element)($rootScope);
       $rootScope.$apply();
-      expect(hintLog.onMessage).toHaveBeenCalledWith('There was an AngularJS error in DIV element. Found incorrect attribute "ng-cick" try "ng-click".');
+      expect(hintLog.onMessage).toHaveBeenCalledWith('##Directives## There was an AngularJS error in DIV element. Found incorrect attribute "ng-cick" try "ng-click".');
     });
 
     it('should ignore comment nodes', function() {
@@ -50,7 +50,7 @@ describe('ddLib and Angular Integration Test', function() {
         };
       });
       $compile('<div><div test-directive></div></div>');
-      expect(hintLog.onMessage).toHaveBeenCalledWith('There was an AngularJS error in DIV element. Attribute name "test-directive" is reserved for element names only.');
+      expect(hintLog.onMessage).toHaveBeenCalledWith('##Directives## There was an AngularJS error in DIV element. Attribute name "test-directive" is reserved for element names only.');
     }));
 
     it('should allow custom directives without "restrict"', inject(function ($compile) {

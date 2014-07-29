@@ -16,13 +16,11 @@ angular.module('ngHintDirectives', ['ngLocale'])
   .config(['$provide', function($provide) {
     $provide.decorator('$compile', ['$delegate', function($delegate) {
       return function(elem) {
-        var messages=[];
         elem = angular.element(elem);
         for(var i = 0; i < elem.length; i+=2){
           if(elem[i].getElementsByTagName){
             var toSend = Array.prototype.slice.call(elem[i].getElementsByTagName('*'));
-            var result = search(toSend, customDirectives);
-            messages = messages.concat(result);
+            search(toSend, customDirectives);
           }
         }
         return $delegate.apply(this, arguments);
