@@ -91,6 +91,10 @@ angular.module('breadcrumbs').
 
 ![alt tag](https://raw.githubusercontent.com/angular/angular-hint-directives/master/demoApp/assets/img/Hint%20Directives%20Console.png)
 
+##Contributing
+
+Want to improve AngularHintEvents or other facets of AngularHint? We'd love to get your help! See the [Contributing Guidelines](https://github.com/angular/angular-hint/blob/master/CONTRIBUTING.md).
+
 ## [License](LICENSE)
 
 Copyright 2014 Google, Inc. http://angularjs.org
