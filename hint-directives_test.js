@@ -61,7 +61,7 @@ describe('ddLib and Angular Integration Test', function() {
         return {};
       });
       $compile('<div></div>');
-      expect(hintLog.onMessage).not.toHaveBeenCalled();
+      expect(hintLog.onMessage).not.toHaveBeenCalledWith('');
     }));
   });
 
