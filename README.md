@@ -20,7 +20,7 @@ enable AngularHintDirectives. Further installation information is available on t
   - [Using directives against their restrict property](#following-restrict-property)
   - [Using deprecated directive options or deprecated directives](#using-deprecated-options)
   - [Using HTML event attributes instead of Angular event directives (onclick vs. ngClick)](#using-angular-event-directives)
-  - [Using ngRepeat's track by and filter incorrectly)](#using-ngrepeat-incorrectly)
+  - [Using ngRepeat's track by and filter incorrectly](#using-ngrepeat-incorrectly)
   - [Declaring directives with no namespace](#missing-namespace)
 
 
