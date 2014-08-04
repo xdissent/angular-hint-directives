@@ -18,9 +18,10 @@ enable AngularHintDirectives. Further installation information is available on t
   - [Misspelled directives and attributes (custom and core)](#misspelled-directives-and-attributes)
   - [Missing required attributes declared within the scope property](#missing-required-attributes)
   - [Using directives against their restrict property](#following-restrict-property)
-  - [Using deprecated options such as 'replace'](#using-deprecated-options)
+  - [Using deprecated directive options or deprecated directives](#using-deprecated-options)
   - [Using HTML event attributes instead of Angular event directives (onclick vs. ngClick)](#using-angular-event-directives)
   - [Declaring directives with no namespace](#missing-namespace)
+
 
 
 #### Misspelled Directives and Attributes
@@ -78,7 +79,7 @@ So if in your code you tried to use the example below You would promtly be notif
 ```
 
 #### Using Deprecated Options
-AngularHintDirectives will notify you if you are using deprecated options when instantiating your directive. In the example below you will be warned about using the 'replace' option in your directive.
+AngularHintDirectives will notify you if you are using deprecated options when instantiating your directive. In the example below you will be warned about using the deprecated 'replace' option in your directive.
 
 ```javascript
 angular.module('breadcrumbs').
@@ -91,6 +92,10 @@ directive('haBreadcrumbs', function() {
   };
 });
 ```
+
+Alternatively, deprecated directives will also generate warnings. The `ng-bind-html-unsafe` directive
+is deprecated and will generate a warning. See the [breaking change](https://github.com/angular/angular.js/commit/dae694739b9581bea5dbc53522ec00d87b26ae55) for more information.
+
 #### Using Angular Event Directives
 AngularHintDirectives will notify you if you are using HTML event attributes such as onclick, onfocus, etc. and prompt you to use their Angular counterparts. Below you would be told to change *'onchange'* to *'ng-change'*.
 ```html
