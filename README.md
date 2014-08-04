@@ -104,7 +104,7 @@ AngularHintDirectives will notify you if you are using HTML event attributes suc
 ```
 
 #### Using ngRepeat Incorrectly
-ngRepeat has a lot of options (e.g. `track by` and `filter:`) and getting them in the right order can be hard. AngularHintDirective helps with this by suggesting the correct ordering for some of the more common uses of ngRepeat. In the example below, `track by` is infront of the pipe, `|`, when it actually belongs after the `filter:searchText`. AngularHintDirective would notify you that the usage is incorrect and that you should instead try `item in items | filter:searchText track by item.id`.
+ngRepeat has a lot of options (e.g. `track by` and `filter:`) and getting them in the right order can be hard. AngularHintDirective helps with this by suggesting the correct ordering for some of the more common uses of ngRepeat. In the example below, `track by` is infront of the pipe, `|`, when it actually belongs after `filter:searchText`. AngularHintDirective would notify you that the usage is incorrect and that you should instead try `item in items | filter:searchText track by item.id`.
 ```HTML
 <ul>
   <li ng-repeat="item in items track by item.id | filter:searchText">
