@@ -36,6 +36,17 @@ describe('ddLib and Angular Integration Test', function() {
     });
 
 
+    it('should warn if a deprecated directive is used', function () {
+      var html = '<div id="deprecated"><div ng-bind-html-unsafe="{expression}">Testing</div></div>';
+      var element = angular.element(html);
+      $compile(element)($rootScope);
+      $rootScope.$apply();
+      expect(hintLog.logMessage).toHaveBeenCalledWith('Directives', 'There was an AngularJS error' +
+        ' in DIV element. Found deprecated directive "ng-bind-html-unsafe". Use an alternative' +
+        ' solution.', 1);
+    });
+
+
     it('should ignore comment nodes', function() {
       var html = '<div id="topTest"><!-- ng-cick  this should not throw--></div>';
       var element = angular.element(html);
