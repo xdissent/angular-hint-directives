@@ -5,9 +5,9 @@ var hintLog = angular.hint;
 describe('ddLib and Angular Integration Test', function() {
 
   beforeEach(module('ngHintDirectives'));
-  beforeEach(inject(function(){
-    hintLog.onMessage = jasmine.createSpy('onMessage');
-  }));
+  beforeEach(function() {
+    spyOn(hintLog, 'logMessage');
+  });
 
   describe('Decorator: $rootScope', function() {
     var $rootScope, $compile;
@@ -22,7 +22,7 @@ describe('ddLib and Angular Integration Test', function() {
       var element = angular.element(html);
       $compile(element)($rootScope);
       $rootScope.$apply();
-      expect(hintLog.onMessage).not.toHaveBeenCalled();
+      expect(hintLog.logMessage).not.toHaveBeenCalled();
     });
 
 
@@ -31,7 +31,8 @@ describe('ddLib and Angular Integration Test', function() {
       var element = angular.element(html);
       $compile(element)($rootScope);
       $rootScope.$apply();
-      expect(hintLog.onMessage).toHaveBeenCalledWith('##Directives## There was an AngularJS error in DIV element. Found incorrect attribute "ng-cick" try "ng-click".');
+      expect(hintLog.logMessage).toHaveBeenCalledWith('Directives', 'There was an AngularJS error' +
+        ' in DIV element. Found incorrect attribute "ng-cick" try "ng-click".', 1);
     });
 
 
@@ -43,8 +44,8 @@ describe('ddLib and Angular Integration Test', function() {
         $rootScope.$apply();
       }).not.toThrow();
     });
-
   });
+
   describe('angular.module Decorator', function () {
     it('should handle restrict regexp correctly', inject(function ($compile) {
       angular.module('testModule',[]).directive('testDirective', function() {
@@ -53,7 +54,8 @@ describe('ddLib and Angular Integration Test', function() {
         };
       });
       $compile('<div><div test-directive></div></div>');
-      expect(hintLog.onMessage).toHaveBeenCalledWith('##Directives## There was an AngularJS error in DIV element. Attribute name "test-directive" is reserved for element names only.');
+      expect(hintLog.logMessage).toHaveBeenCalledWith('Directives', 'There was an AngularJS error' +
+        ' in DIV element. Attribute name "test-directive" is reserved for element names only.', 1);
     }));
 
     it('should allow custom directives without "restrict"', inject(function ($compile) {
@@ -61,10 +63,9 @@ describe('ddLib and Angular Integration Test', function() {
         return {};
       });
       $compile('<div></div>');
-      expect(hintLog.onMessage).not.toHaveBeenCalledWith('');
+      expect(hintLog.logMessage).not.toHaveBeenCalledWith('');
     }));
   });
-
 });
 
 describe('logging through hintLog pipeline', function() {
@@ -83,7 +84,7 @@ describe('logging through hintLog pipeline', function() {
     $compile(element)($rootScope);
     $rootScope.$apply();
     var log = hintLog.flush();
-    expect(Object.keys(log['Directives'])).toEqual([' There was an AngularJS error in DIV element. Found incorrect attribute "ng-cick" try "ng-click".']);
+    expect(log['Directives']['Error Messages']).toEqual([ 'There was an AngularJS error in DIV element. Found incorrect attribute "ng-cick" try "ng-click".']);
   }));
 
 
@@ -95,7 +96,7 @@ describe('logging through hintLog pipeline', function() {
     });
     $compile('<div><div test-directive></div></div>');
     var log = hintLog.flush();
-    expect(Object.keys(log['Directives'])).toEqual([ ' There was an AngularJS error in DIV element. Attribute name "test-directive" is reserved for element names only.' ]);
+    expect(log['Directives']['Error Messages']).toEqual(['There was an AngularJS error in DIV element. Attribute name "test-directive" is reserved for element names only.' ]);
   }));
 
 
@@ -107,7 +108,7 @@ describe('logging through hintLog pipeline', function() {
     });
     $compile('<test-directive></test-directive>');
     var log = hintLog.flush();
-    expect(Object.keys(log['Directives'])).toEqual([ ' Directive "testdirective" should have proper namespace try adding a prefix and/or using camelcase.' ]);
+    expect(log['Directives']['Suggestion Messages']).toEqual([ 'Directive "testdirective" should have proper namespace try adding a prefix and/or using camelcase.' ]);
   }));
 
 
@@ -120,6 +121,6 @@ describe('logging through hintLog pipeline', function() {
     });
     $compile('<test-directive></test-directive>');
     var log = hintLog.flush();
-    expect(Object.keys(log['Directives'])).toEqual([ ' The use of "replace" in directive factories is deprecated, and it was found in "testDirective".' ]);
+    expect(log['Directives']['Error Messages']).toEqual([ 'The use of "replace" in directive factories is deprecated, and it was found in "testDirective".' ]);
   }));
 });

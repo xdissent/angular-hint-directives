@@ -1,6 +1,5 @@
 'use strict';
 
-var hintLog = angular.hint = require('angular-hint-log');
 var ddLibData = require('./lib/ddLib-data');
 
 var RESTRICT_REGEXP = /restrict\s*:\s*['"](.+?)['"]/;
