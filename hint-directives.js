@@ -27,31 +27,6 @@ angular.module('ngHintDirectives', ['ngLocale'])
     }]);
   }]);
 
-
-angular.module('ngLocale').config(function($provide) {
-  var originalProvider = $provide.provider;
-  $provide.provider = function(token, provider) {
-    provider = originalProvider.apply($provide, arguments);
-    if (token === '$compile') {
-      var originalProviderDirective = provider.directive;
-      provider.directive = function(dirsObj) {
-        for(var prop in dirsObj){
-          var propDashed = dasherize(prop);
-          if(isNaN(+propDashed) &&
-              !defaultDirectives[propDashed] &&
-              !htmlDirectives[propDashed]) {
-            var matchRestrict = dirsObj[prop].toString().match(RESTRICT_REGEXP);
-            ddLibData.directiveTypes['angular-default-directives']
-                .directives[propDashed] = (matchRestrict && matchRestrict[1]) || 'ACME';
-          }
-        }
-        return originalProviderDirective.apply(this, arguments);
-      };
-    }
-    return provider;
-  };
-});
-
 var originalAngularModule = angular.module;
 angular.module = function() {
   var module = originalAngularModule.apply(this, arguments);

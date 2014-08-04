@@ -1,4 +1,3 @@
-
 var getFailedAttributes = require('../lib/getFailedAttributes');
 
 describe('getFailedAttributes()', function() {
