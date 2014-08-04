@@ -20,6 +20,7 @@ enable AngularHintDirectives. Further installation information is available on t
   - [Using directives against their restrict property](#following-restrict-property)
   - [Using deprecated directive options or deprecated directives](#using-deprecated-options)
   - [Using HTML event attributes instead of Angular event directives (onclick vs. ngClick)](#using-angular-event-directives)
+  - [Using ngRepeat's track by and filter incorrectly)](#using-ngrepeat-incorrectly)
   - [Declaring directives with no namespace](#missing-namespace)
 
 
@@ -100,6 +101,16 @@ is deprecated and will generate a warning. See the [breaking change](https://git
 AngularHintDirectives will notify you if you are using HTML event attributes such as onclick, onfocus, etc. and prompt you to use their Angular counterparts. Below you would be told to change *'onchange'* to *'ng-change'*.
 ```html
 <div id='search' onchange='update()'></div>
+```
+
+#### Using ngRepeat Incorrectly
+ngRepeat has a lot of options (e.g. `track by` and `filter:`) and getting them in the right order can be hard. AngularHintDirective helps with this by suggesting the correct ordering for some of the more common uses of ngRepeat's `track by` and `filter:`. In the example below, `track by` is infront of the pipe, `|`, when it actually belongs after the `filter:searchText`. AngularHintDirective would notify you that the usage is incorrect and that you should instead try `item in items | filter:searchText track by item.id`.
+```HTML
+<ul>
+  <li ng-repeat="item in items track by item.id | filter:searchText">
+  {{item.name}} - {{item.price}}
+  </li>
+</ul>
 ```
 
 #### Missing Namespace
