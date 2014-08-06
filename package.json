@@ -8,7 +8,15 @@
     "karma-chrome-launcher": "^0.1.4",
     "karma-coverage": "~0.1.4",
     "karma-firefox-launcher": "^0.1.3",
-    "karma-jasmine": "^0.1.5"
+    "karma-jasmine": "^0.1.5",
+    "browserify": "^4.2.0",
+    "gulp": "^3.8.6",
+    "karma": "^0.12.17",
+    "karma-bro": "^0.6.0",
+    "karma-coverage": "^0.2.4",
+    "karma-sauce-launcher": "^0.2.9",
+    "vinyl-source-stream": "^0.1.1",
+    "watchify": "^0.10.2"
   },
   "scripts": {
     "test": "karma start karma-sauce.conf.js",
@@ -26,15 +34,7 @@
   "homepage": "https://github.com/angular/angular-hint-directives",
   "dependencies": {
     "angular-hint-log": ">=0.4.0",
-    "browserify": "^4.2.0",
     "dasherize": "^1.0.0",
-    "gulp": "^3.8.6",
-    "karma": "^0.12.17",
-    "karma-bro": "^0.6.0",
-    "karma-coverage": "^0.2.4",
-    "karma-sauce-launcher": "^0.2.9",
     "validate-element-name": "git://github.com/sindresorhus/validate-element-name",
-    "vinyl-source-stream": "^0.1.1",
-    "watchify": "^0.10.2"
   }
 }
