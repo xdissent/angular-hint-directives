@@ -27,15 +27,28 @@ angular.module('ngHintDirectives', ['ngLocale'])
     }]);
   }]);
 
+function supportObject(directiveObject) {
+  if(typeof directiveObject === 'object') {
+    var keys = Object.keys(directiveObject);
+    for(var i = keys.length - 1; i >= 0; i--) {
+      if(typeof directiveObject[keys[i]] === 'function') {
+        return directiveObject[keys[i]];
+      }
+    }
+  }
+  return function(){};
+}
+
 var originalAngularModule = angular.module;
 angular.module = function() {
   var module = originalAngularModule.apply(this, arguments);
   var originalDirective = module.directive;
   module.directive = function(directiveName, directiveFactory) {
+    directiveFactory = directiveFactory || supportObject(directiveName);
+    directiveName = typeof directiveName === 'string' ? directiveName : Object.keys(directiveName)[0];
     var originalDirectiveFactory = typeof directiveFactory === 'function' ? directiveFactory :
         directiveFactory[directiveFactory.length - 1];
     var factoryStr = originalDirectiveFactory.toString();
-
     checkPrelimErrors(directiveName,factoryStr);
 
     var pairs = getKeysAndValues(factoryStr);

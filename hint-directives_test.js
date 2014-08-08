@@ -76,6 +76,19 @@ describe('ddLib and Angular Integration Test', function() {
       $compile('<div></div>');
       expect(hintLog.logMessage).not.toHaveBeenCalledWith('');
     }));
+
+
+    it('it should handle directiveFactories passed as objects', inject(function ($compile) {
+      angular.module('testModule',[]).directive({'testDirective' : function() {
+        return {
+          restrict  :  "E"
+        };
+      }});
+
+      expect(function() {
+        $compile('<div><div test-directive></div></div>');
+      }).not.toThrow();
+    }));
   });
 });
 
