@@ -16,7 +16,7 @@ angular.module('ngHintDirectives', ['ngLocale'])
     $provide.decorator('$compile', ['$delegate', function($delegate) {
       return function(elem) {
         elem = angular.element(elem);
-        for(var i = 0; i < elem.length; i+=2){
+        for(var i = 0, length = elem.length; i < length; i+=2){
           if(elem[i].getElementsByTagName){
             var toSend = Array.prototype.slice.call(elem[i].getElementsByTagName('*'));
             search(toSend, customDirectives);
@@ -46,9 +46,11 @@ angular.module = function() {
   module.directive = function(directiveName, directiveFactory) {
     directiveFactory = directiveFactory || supportObject(directiveName);
     directiveName = typeof directiveName === 'string' ? directiveName : Object.keys(directiveName)[0];
+
     var originalDirectiveFactory = typeof directiveFactory === 'function' ? directiveFactory :
         directiveFactory[directiveFactory.length - 1];
     var factoryStr = originalDirectiveFactory.toString();
+
     checkPrelimErrors(directiveName,factoryStr);
 
     var pairs = getKeysAndValues(factoryStr);
