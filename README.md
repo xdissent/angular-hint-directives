@@ -100,12 +100,12 @@ is deprecated and will generate a warning. See the [breaking change](https://git
 #### Using Angular Event Directives
 AngularHintDirectives will notify you if you are using HTML event attributes such as onclick, onfocus, etc. and prompt you to use their Angular counterparts. Below you would be told to change *'onchange'* to *'ng-change'*.
 ```html
-<div id='search' onchange='update()'></div>
+<div id="search" onchange="update()"></div>
 ```
 
 #### Using ngRepeat Incorrectly
 ngRepeat has a lot of options (e.g. `track by` and `filter:`) and getting them in the right order can be hard. AngularHintDirective helps with this by suggesting the correct ordering for some of the more common uses of ngRepeat. In the example below, `track by` is infront of the pipe, `|`, when it actually belongs after `filter:searchText`. AngularHintDirective would notify you that the usage is incorrect and that you should instead try `item in items | filter:searchText track by item.id`.
-```HTML
+```html
 <ul>
   <li ng-repeat="item in items track by item.id | filter:searchText">
   {{item.name}} - {{item.price}}
@@ -115,18 +115,18 @@ ngRepeat has a lot of options (e.g. `track by` and `filter:`) and getting them i
 
 #### Missing Namespace
 It is important for the components we create to have their own unique namespace so as to not conflict with exsisting components in Angular or external libraries that may be used. The best practice for namespaces it to use lowerCamelCase and a unique prefix
-for the scope of an application. For example, in the code below, if a directive with name 'mycomponent' was created, you would be warned to use a more appropriate name.
+for the scope of an application. For example, in the code below, if a directive with name `mycomponent` was created, you would be warned to use a more appropriate name.
 
 ```javascript
 angular.module('breadcrumbs').
-  directive('mycomponent', function() { ... };
+  directive('mycomponent', function() { ... });
 });
 ```
 Improved namespace:
 
 ```javascript
 angular.module('breadcrumbs').
-  directive('abMyComponent', function() { ... };
+  directive('abMyComponent', function() { ... });
 });
 ```
 
@@ -135,7 +135,7 @@ used for AngularJS directives) ensures that custom directives defined with that 
 likely to conflict with the names given to AngularJS directives or directives loaded from third
 parties.
 
-##Contributing
+## Contributing
 
 Want to improve AngularHintEvents or other facets of AngularHint? We'd love to get your help! See the [Contributing Guidelines](https://github.com/angular/angular-hint/blob/master/CONTRIBUTING.md).
 
