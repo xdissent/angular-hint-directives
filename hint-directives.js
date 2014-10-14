@@ -16,8 +16,8 @@ angular.module('ngHintDirectives', [])
     $provide.decorator('$compile', ['$delegate', function($delegate) {
       return function(elem) {
         elem = angular.element(elem);
-        for(var i = 0, length = elem.length; i < length; i+=2){
-          if(elem[i].getElementsByTagName){
+        for(var i = 0, length = elem.length; i < length; i+=2) {
+          if(elem[i].getElementsByTagName) {
             var toSend = Array.prototype.slice.call(elem[i].getElementsByTagName('*'));
             search(toSend, customDirectives);
           }
@@ -36,7 +36,7 @@ function supportObject(directiveObject) {
       }
     }
   }
-  return function(){};
+  return function() {};
 }
 
 var originalAngularModule = angular.module;
@@ -49,16 +49,24 @@ angular.module = function() {
 
     var originalDirectiveFactory = typeof directiveFactory === 'function' ? directiveFactory :
         directiveFactory[directiveFactory.length - 1];
+
     var factoryStr = originalDirectiveFactory.toString();
 
-    checkPrelimErrors(directiveName,factoryStr);
+    checkPrelimErrors(directiveName, factoryStr);
 
     var pairs = getKeysAndValues(factoryStr);
-    pairs.map(function(pair){customDirectives.push(pair);});
+    pairs.map(function(pair) {
+      customDirectives.push(pair);
+    });
 
     var matchRestrict = factoryStr.match(RESTRICT_REGEXP);
     var restrict = (matchRestrict && matchRestrict[1]) || 'A';
-    var directive = {directiveName: directiveName, restrict: restrict,  require:pairs};
+    var directive = {
+      directiveName: directiveName,
+      restrict: restrict,
+      require: pairs
+    };
+
     customDirectives.push(directive);
 
     return originalDirective.apply(this, arguments);
