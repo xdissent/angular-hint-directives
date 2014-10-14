@@ -11,7 +11,7 @@ var getKeysAndValues = require('./lib/getKeysAndValues');
 var defaultDirectives = ddLibData.directiveTypes['angular-default-directives'].directives;
 var htmlDirectives = ddLibData.directiveTypes['html-directives'].directives;
 
-angular.module('ngHintDirectives', ['ngLocale'])
+angular.module('ngHintDirectives', [])
   .config(['$provide', function($provide) {
     $provide.decorator('$compile', ['$delegate', function($delegate) {
       return function(elem) {
