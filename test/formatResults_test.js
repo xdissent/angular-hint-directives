@@ -15,6 +15,6 @@ describe('formatResults()', function() {
     var log = angular.hint.flush();
     var display = ['There was an AngularJS error in HTML element. Found incorrect '+
       'attribute "ng-ap" try "ng-app".'];
-    expect(log['Directives']['Error Messages']).toEqual(display);
+    expect(log['Directives'].error).toEqual(display);
   });
 });

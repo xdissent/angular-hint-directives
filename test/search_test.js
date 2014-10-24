@@ -17,7 +17,7 @@ describe('search()', function() {
       {attributes: [{nodeName: 'ng-clic'}], nodeName: 'DIV'}
     ];
     search(elementsToTest);
-    expect(angular.hint.flush()['Directives']['Error Messages'].length).toBe(3);
+    expect(angular.hint.flush()['Directives'].error.length).toBe(3);
   });
 
 
@@ -26,7 +26,7 @@ describe('search()', function() {
       {attributes: [{nodeName: 'ng-clic'}], nodeName: 'DIV'}
     ];
     search(elementsToTest);
-    expect(angular.hint.flush()['Directives']['Error Messages']).toEqual(['There was an AngularJS error in DIV element. Found '+
+    expect(angular.hint.flush()['Directives'].error).toEqual(['There was an AngularJS error in DIV element. Found '+
       'incorrect attribute "ng-clic" try "ng-click".']);
   });
 });

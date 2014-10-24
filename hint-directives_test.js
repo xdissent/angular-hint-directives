@@ -59,9 +59,9 @@ describe('ddLib and Angular Integration Test', function() {
 
   describe('angular.module Decorator', function () {
     it('should handle restrict regexp correctly', inject(function ($compile) {
-      angular.module('testModule',[]).directive('testDirective', function() {
+      angular.module('testModule', []).directive('testDirective', function() {
         return {
-          restrict  :  "E"
+          restrict: "E"
         };
       });
       $compile('<div><div test-directive></div></div>');
@@ -79,9 +79,9 @@ describe('ddLib and Angular Integration Test', function() {
 
 
     it('it should handle directiveFactories passed as objects', inject(function ($compile) {
-      angular.module('testModule',[]).directive({'testDirective' : function() {
+      angular.module('testModule', []).directive({'testDirective' : function() {
         return {
-          restrict  :  "E"
+          restrict: "E"
         };
       }});
 
@@ -108,7 +108,7 @@ describe('logging through hintLog pipeline', function() {
     $compile(element)($rootScope);
     $rootScope.$apply();
     var log = hintLog.flush();
-    expect(log['Directives']['Error Messages']).toEqual([ 'There was an AngularJS error in DIV element. Found incorrect attribute "ng-cick" try "ng-click".']);
+    expect(log['Directives'].error).toEqual([ 'There was an AngularJS error in DIV element. Found incorrect attribute "ng-cick" try "ng-click".']);
   }));
 
 
@@ -120,7 +120,7 @@ describe('logging through hintLog pipeline', function() {
     });
     $compile('<div><div test-directive></div></div>');
     var log = hintLog.flush();
-    expect(log['Directives']['Error Messages']).toEqual(['There was an AngularJS error in DIV element. Attribute name "test-directive" is reserved for element names only.' ]);
+    expect(log['Directives'].error).toEqual(['There was an AngularJS error in DIV element. Attribute name "test-directive" is reserved for element names only.' ]);
   }));
 
 
@@ -132,7 +132,7 @@ describe('logging through hintLog pipeline', function() {
     });
     $compile('<test-directive></test-directive>');
     var log = hintLog.flush();
-    expect(log['Directives']['Suggestion Messages']).toEqual([ 'Directive "testdirective" should have proper namespace try adding a prefix and/or using camelcase.' ]);
+    expect(log['Directives'].suggestion).toEqual([ 'Directive "testdirective" should have proper namespace try adding a prefix and/or using camelcase.' ]);
   }));
 
 
@@ -145,6 +145,6 @@ describe('logging through hintLog pipeline', function() {
     });
     $compile('<test-directive></test-directive>');
     var log = hintLog.flush();
-    expect(log['Directives']['Error Messages']).toEqual([ 'The use of "replace" in directive factories is deprecated, and it was found in "testDirective".' ]);
+    expect(log['Directives'].error).toEqual([ 'The use of "replace" in directive factories is deprecated, and it was found in "testDirective".' ]);
   }));
 });
