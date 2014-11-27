@@ -14,7 +14,7 @@ var htmlDirectives = ddLibData.directiveTypes['html-directives'].directives;
 angular.module('ngHintDirectives', [])
   .config(['$provide', function($provide) {
     $provide.decorator('$compile', ['$delegate', function($delegate) {
-      return function(elem) {
+      var decorated = function(elem) {
         elem = angular.element(elem);
         for(var i = 0, length = elem.length; i < length; i+=2) {
           if(elem[i].getElementsByTagName) {
@@ -24,6 +24,12 @@ angular.module('ngHintDirectives', [])
         }
         return $delegate.apply(this, arguments);
       };
+      Object.keys($delegate).forEach(function (method) {
+        if (typeof $delegate[method] === 'function') {
+          decorated[method] = $delegate[method].bind(decorated);
+        }
+      });
+      return decorated;
     }]);
   }]);
 
